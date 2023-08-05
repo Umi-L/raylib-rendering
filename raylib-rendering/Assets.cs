@@ -19,6 +19,7 @@ namespace raylib_rendering
         public static Shader defaultShader;
         public static Shader outlineShader;
         public static Shader paperShader;
+        public static Shader lightingShader;
 
         public static ShaderProgram outlineShaderProgram;
         public static ShaderProgram paperShaderProgram;
@@ -46,10 +47,12 @@ namespace raylib_rendering
             defaultShader = Raylib.LoadShader((string)null, (string)null);
             outlineShader = Raylib.LoadShader(null, "assets/shaders/outline.frag");
             paperShader = Raylib.LoadShader(null, "assets/shaders/paper.frag");
+            lightingShader = Raylib.LoadShader("assets/shaders/lighting.vert", "assets/shaders/lighting.frag");
 
             unsafe
             {
                 normalShader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_MODEL] = Raylib.GetShaderLocation(normalShader, "matModel");
+                lightingShader.locs[(int)ShaderLocationIndex.SHADER_LOC_VECTOR_VIEW] = Raylib.GetShaderLocation(lightingShader, "viewPos");
             }
 
             // load shaderPrograms

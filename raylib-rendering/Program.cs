@@ -5,6 +5,7 @@ using raylib_rendering.Rendering;
 using SpixelRenderer;
 using System.Numerics;
 using ImGuiNET;
+using Raylights_cs;
 
 namespace HelloWorld
 {
@@ -49,6 +50,23 @@ namespace HelloWorld
 
             var scene = SceneManager.LoadScene("assets/scenes/testScene.txt");
 
+            // Using 4 point lights: Color.gold, Color.red, Color.green and Color.blue
+            Light[] lights = new Light[4];
+            lights[0] = Rlights.CreateLight(
+                0,
+                LightType.Directorional,
+                new Vector3(1, 1, 0),
+                Vector3.Zero,
+                new Color(255,255,255, 255),
+                Assets.lightingShader
+            );
+
+            lights[0].enabled = true;
+
+            // ambient light level
+            int ambientLoc = Raylib.GetShaderLocation(Assets.lightingShader, "ambient");
+            float[] ambient = new[] { 0.7f, 0.7f, 0.7f, 1.0f };
+            Raylib.SetShaderValue(Assets.lightingShader, ambientLoc, ambient, ShaderUniformDataType.SHADER_UNIFORM_VEC4);
 
             rlImGui.Setup(true);
 
@@ -60,9 +78,18 @@ namespace HelloWorld
 
                 runningrot += 0.1f;
 
+                if (Raylib.IsKeyPressed(KeyboardKey.KEY_Y))
+                {
+                    lights[0].enabled = !lights[0].enabled;
+                }
+
+                // Update light values (actually, only enable/disable them)
+                Rlights.UpdateLightValues(Assets.lightingShader, lights[0]);
+
                 unsafe
                 {
                     Raylib.SetShaderValue(Assets.normalShader, Assets.normalShader.locs[(int)ShaderLocationIndex.SHADER_LOC_VECTOR_VIEW], camera.position.X, ShaderUniformDataType.SHADER_UNIFORM_VEC3);
+                    Raylib.SetShaderValue(Assets.lightingShader, Assets.normalShader.locs[(int)ShaderLocationIndex.SHADER_LOC_VECTOR_VIEW], camera.position.X, ShaderUniformDataType.SHADER_UNIFORM_VEC3);
                 }
 
                 Assets.paperShaderProgram.SetShaderUniform("scroll", new Vector2(camera.position.X, camera.position.Y)*10);
