@@ -18,7 +18,7 @@ namespace HelloWorld
         public static Vector2 paperScroll = new Vector2(0,0);
         public static Vector2 paperScale = new Vector2(1,1);
         public static float paperFactor = 1f;
-        public static Vector4 paperColor = new Vector4(0,0,0,1);
+        public static Vector4 paperColor = new Vector4(0, 0, 0, 1);
 
         public static void Main()
         {
@@ -30,7 +30,7 @@ namespace HelloWorld
             RenderTexture2D rtex = DepthTexture.LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
 
             Assets.Load();
-
+            
             // init RenderSystem
             RenderSystem renderSystem = new RenderSystem(new RenderPass[]
             {
@@ -41,14 +41,14 @@ namespace HelloWorld
 
             // init camera
             var camera = new Camera3D(
-                new Vector3(50.0f, 50.0f, 50.0f),
+                new Vector3(100.0f, 100.0f, 100.0f),
                 new Vector3(0.0f, 0.0f, 0.0f),
                 new Vector3(0.0f, 1.0f, 0.0f),
                 10.0f,
-                CameraProjection.CAMERA_PERSPECTIVE
+                CameraProjection.CAMERA_ORTHOGRAPHIC
             );
 
-            var scene = SceneManager.LoadScene("assets/scenes/testScene.txt");
+            var scene = SceneManager.LoadScene("assets/scenes/Scene1.txt");
 
             // Using 4 point lights: Color.gold, Color.red, Color.green and Color.blue
             Light[] lights = new Light[4];
@@ -74,7 +74,8 @@ namespace HelloWorld
             {
 
                 // update camera
-                Raylib.UpdateCamera(ref camera, CameraMode.CAMERA_THIRD_PERSON);
+                //Raylib.UpdateCamera(ref camera, CameraMode.CAMERA_THIRD_PERSON);
+                CustomCamera.UpdateCamera(ref camera);
 
                 runningrot += 0.1f;
 
@@ -94,7 +95,7 @@ namespace HelloWorld
 
                 Assets.paperShaderProgram.SetShaderUniform("scroll", new Vector2(camera.position.X, camera.position.Y)*10);
 
-                renderSystem.Draw(delegate ()
+                renderSystem.Draw(delegate
                 {
                     Raylib.BeginMode3D(camera);
                     {
@@ -105,7 +106,7 @@ namespace HelloWorld
                     Raylib.EndMode3D();
                 },
                 
-                delegate ()
+                delegate
                 {
                     ImGui.Text("Outline");
                     if ( ImGui.SliderFloat("outlineWidth", ref outlineWidth, 0.1f, 10f))
@@ -138,6 +139,9 @@ namespace HelloWorld
                     {
                         Assets.paperShaderProgram.SetShaderUniform("paperColor", paperColor);
                     }
+                    
+                    ImGui.Text("SceneInfo");
+                    scene.DebugInfo();
                 }
                 );
 

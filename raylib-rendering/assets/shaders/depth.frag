@@ -12,16 +12,16 @@ uniform vec2 screenSize;
 
 // Output fragment color
 out vec4 finalColor;
-
 void main()
 {
-    float zNear = 0.01; // camera z near
-    float zFar = 500.0;  // camera z far
+//    float zNear = 0.01; // camera z near
+//    float zFar = 1000.0;  // camera z far
     float z = texture(depth, fragTexCoord).x;
 
     // Linearize depth value
-    float depthlinear = (2.0*zNear)/(zFar + zNear - z*(zFar - zNear));
+//    float depthlinear = (2.0*zNear)/(zFar + zNear - z*(zFar - zNear));
+    
 
     // Calculate final fragment color
-    finalColor = vec4(vec3(depthlinear), 1.0f);
+    finalColor = vec4(vec3(z), 1.0f);
 }

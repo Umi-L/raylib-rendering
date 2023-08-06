@@ -10,6 +10,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using ImGuiNET;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace raylib_rendering.Rendering
@@ -24,9 +25,47 @@ namespace raylib_rendering.Rendering
             {
                 if (entity.id == null) continue;
 
-                Assets.Prefabs.TryGetValue(entity.id, out var model);
+                bool success = Assets.Prefabs.TryGetValue(entity.id, out var model);
+                
+                if (!success) throw new Exception($"Prefab with id {entity.id} not found");
 
-                Raylib.DrawModelEx(model, entity.position * scale, Vector3.Zero, 0f, entity.scale * scale, Color.WHITE);
+                // rotation to quaternion
+                Quaternion q = Quaternion.CreateFromYawPitchRoll(entity.rotation.Y, entity.rotation.X, entity.rotation.Z);
+                
+                // quaternion to axis angle
+                float angle = (float)(2 * Math.Acos(q.W));
+
+                double funnyNumber = Math.Sqrt(1 - q.W * q.W);
+                
+                if (double.IsNaN(funnyNumber) || funnyNumber == 0) funnyNumber = 1;
+
+                Vector3 axis = new Vector3(
+                    (float)(q.X / funnyNumber),
+                    (float)(q.Y / funnyNumber),
+                    (float)(q.Z / funnyNumber)
+                );
+                
+                // convert angle to euler
+                angle = angle * (float)(180 / Math.PI);
+                
+                // Console.WriteLine($"Angle: {angle}; Axis: {axis} id {entity.id} q.w {q.W} funnyNumber {funnyNumber}");
+                
+                Raylib.DrawModelEx(model, entity.position * scale, axis, angle, entity.scale * scale, Color.WHITE);
+            }
+        }
+
+        public void DebugInfo()
+        {
+            foreach (SceneEntity entity in entities)
+            {
+                
+                Vector3 rotationEuler = new Vector3(
+                    (float)(entity.rotation.X * (180 / Math.PI)),
+                    (float)(entity.rotation.Y * (180 / Math.PI)),
+                    (float)(entity.rotation.Z * (180 / Math.PI))
+                );
+                
+                ImGui.Text($"Name: {entity.id} Position: {entity.position} Rotation: {rotationEuler} Scale: {entity.scale}");
             }
         }
     }
@@ -53,13 +92,18 @@ namespace raylib_rendering.Rendering
 
                 //swap y and z on all vec3s because blender
                 entity.position = FlipYAndZ(entity.position);
-                entity.position.Y = -entity.position.Y;
-
+                entity.position.Y = entity.position.Y;
+                entity.position.X = entity.position.X;
+                entity.position.Z = -entity.position.Z;
+                
                 entity.rotation = FlipYAndZ(entity.rotation);
                 entity.scale = FlipYAndZ(entity.scale);
 
+                // entity.rotation.Y += (float)Math.PI/2; // maybe fixes rotation?
 
-                Console.WriteLine($"Name: {entity.name}; Position: {entity.position}; Scale: {entity.scale}; rotation: {entity.rotation}");
+                // Console.WriteLine($"Name: {entity.name}; Position: {entity.position}; Scale: {entity.scale}; rotation: {entity.rotation}");
+                
+                
             }
 
             return scene;
