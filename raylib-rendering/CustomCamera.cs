@@ -108,6 +108,13 @@ namespace raylib_rendering
             }
             
             
+            // clamp values
+            if (camera.fovy < 1)
+            {
+                camera.fovy = 1;
+            }
+            
+            
             
             
         }

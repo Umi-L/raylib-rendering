@@ -73,8 +73,12 @@ void main()
             specular += specCo;
         }
     }
-
+    
+    
+    
     finalColor = (texelColor*((colDiffuse + vec4(specular, 1.0))*vec4(lightDot, 1.0)));
+    
+    // apply ambient
     finalColor += texelColor*(ambient/10.0)*colDiffuse;
 
     // Gamma correction

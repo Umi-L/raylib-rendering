@@ -7,7 +7,7 @@ using System.Numerics;
 using ImGuiNET;
 using Raylights_cs;
 
-namespace HelloWorld
+namespace raylib_rendering
 {
     static class Program
     {
@@ -19,6 +19,10 @@ namespace HelloWorld
         public static Vector2 paperScale = new Vector2(1,1);
         public static float paperFactor = 1f;
         public static Vector4 paperColor = new Vector4(0, 0, 0, 1);
+        
+        public static float hueShift = 0f;
+        public static float saturationShift = 0.2f;
+        public static float valueShift = 0.2f;
 
         public static void Main()
         {
@@ -34,9 +38,10 @@ namespace HelloWorld
             // init RenderSystem
             RenderSystem renderSystem = new RenderSystem(new RenderPass[]
             {
-                //new RenderPass(Assets.testShader),
+                new RenderPass(Assets.colourFilterShaderProgram),
                 new RenderPass(Assets.outlineShaderProgram),
                 new RenderPass(Assets.paperShaderProgram),
+                // new RenderPass(Assets.testShaderProgram),
             });
 
             // init camera
@@ -138,6 +143,19 @@ namespace HelloWorld
                     if (ImGui.ColorEdit4("paperColor", ref paperColor))
                     {
                         Assets.paperShaderProgram.SetShaderUniform("paperColor", paperColor);
+                    }
+
+                    if (ImGui.SliderFloat("hueShift", ref hueShift, -1f, 1f))
+                    {
+                        Assets.colourFilterShaderProgram.SetShaderUniform("hueShift", hueShift);
+                    }
+                    if (ImGui.SliderFloat("saturationShift", ref saturationShift, -1f, 1f))
+                    {
+                        Assets.colourFilterShaderProgram.SetShaderUniform("saturationShift", saturationShift);
+                    }
+                    if (ImGui.SliderFloat("lightnessShift", ref valueShift, -1f, 1f))
+                    {
+                        Assets.colourFilterShaderProgram.SetShaderUniform("lightnessShift", valueShift);
                     }
                     
                     ImGui.Text("SceneInfo");

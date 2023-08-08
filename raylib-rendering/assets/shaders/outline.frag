@@ -27,6 +27,31 @@ bool colorDistance(float threshold, vec4 color1, vec4 color2) {
     return true;
 }
 
+float unpack(vec3 vector3) {
+
+    float x = 0.0;
+
+    if (vector3.r == 1.0){
+        if (vector3.g == 1.0){
+            x = vector3.b + 2.0;
+        } else {
+            x = vector3.g + 1.0;
+        }
+    } else {
+        x = vector3.r;
+    }
+
+    x /= 3;
+
+    return x;
+}
+
+float sampleDepth(vec2 uv) {
+    return unpack(texture(depth, uv).rgb);
+}
+
+
+
 bool outlineNormal(float width)
 {
     float normalThreshold = 0.5;
@@ -59,7 +84,7 @@ bool outlineNormal(float width)
 
 bool outlineDepth(float width) {
 
-    float depthThreshold = 7;
+    float depthThreshold = 0.5;
 
     float halfScaleFloor = floor(width * 0.5);
     float halfScaleCeil = ceil(width * 0.5);
@@ -71,15 +96,15 @@ bool outlineDepth(float width) {
     vec2 bottomRightUV = fragTexCoord + vec2(_MainTex_TexelSize.x * halfScaleCeil, -_MainTex_TexelSize.y * halfScaleFloor);
     vec2 topLeftUV = fragTexCoord + vec2(-_MainTex_TexelSize.x * halfScaleFloor, _MainTex_TexelSize.y * halfScaleCeil);
 
-    vec4 bottomLeftDepth = texture(depth, bottomLeftUV);
-    vec4 topRightDepth = texture(depth, topRightUV);
-    vec4 bottomRightDepth = texture(depth, bottomRightUV);
-    vec4 topLeftDepth = texture(depth, topLeftUV);
+    float bottomLeftDepth = sampleDepth(bottomLeftUV);
+    float topRightDepth = sampleDepth(topRightUV);
+    float bottomRightDepth = sampleDepth(bottomRightUV);
+    float topLeftDepth = sampleDepth(topLeftUV);
 
-    depthThreshold = depthThreshold * bottomLeftDepth.r;
+//    depthThreshold = depthThreshold * bottomLeftDepth;
 
-    float depthFiniteDifference0 = topRightDepth.x - bottomLeftDepth.x;
-    float depthFiniteDifference1 = bottomRightDepth.x - topLeftDepth.x;
+    float depthFiniteDifference0 = topRightDepth - bottomLeftDepth;
+    float depthFiniteDifference1 = bottomRightDepth - topLeftDepth;
 
     float edgeDepth = sqrt(pow(depthFiniteDifference0, 2) + pow(depthFiniteDifference1, 2)) * 100;
 

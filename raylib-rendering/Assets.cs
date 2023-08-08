@@ -20,9 +20,12 @@ namespace raylib_rendering
         public static Shader outlineShader;
         public static Shader paperShader;
         public static Shader lightingShader;
+        public static Shader colourFilterShader;
 
         public static ShaderProgram outlineShaderProgram;
         public static ShaderProgram paperShaderProgram;
+        public static ShaderProgram colourFilterShaderProgram;
+        public static  ShaderProgram testShaderProgram;
 
         public static Texture2D scarecrowTexture;
 
@@ -48,6 +51,7 @@ namespace raylib_rendering
             outlineShader = Raylib.LoadShader(null, "assets/shaders/outline.frag");
             paperShader = Raylib.LoadShader(null, "assets/shaders/paper.frag");
             lightingShader = Raylib.LoadShader("assets/shaders/lighting.vert", "assets/shaders/lighting.frag");
+            colourFilterShader = Raylib.LoadShader(null, "assets/shaders/colourFilter.frag");
 
             unsafe
             {
@@ -75,6 +79,19 @@ namespace raylib_rendering
                     { "paperColor", new ShaderProgramUniform() {DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(23f/255f,11f/255f,11f/255f,1)} }
                 }
             );
+            
+            colourFilterShaderProgram = new ShaderProgram(
+                Assets.colourFilterShader,
+                new Dictionary<string, ShaderProgramUniform>()
+                {
+                    { "hueShift", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0f } },
+                    { "saturationShift", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.2f } },
+                    { "lightnessShift", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.2f } }
+                }
+            );
+
+            testShaderProgram = new ShaderProgram(Assets.testShader, new Dictionary<string, ShaderProgramUniform>());
+            
 
 
 

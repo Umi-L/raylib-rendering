@@ -59,7 +59,7 @@ namespace raylib_rendering.Rendering
                 }
                 else
                 {
-                    //Console.WriteLine($"uniform {uniform.Key} value set to {uniform.Value.value} with loc {uniform.Value.location}");
+                    // Console.WriteLine($"uniform {uniform.Key} value set to {uniform.Value.value} with loc {uniform.Value.location}");
                     Raylib.SetShaderValue(shader, uniform.Value.location, uniform.Value.value, uniform.Value.DataType);
                 }
             }

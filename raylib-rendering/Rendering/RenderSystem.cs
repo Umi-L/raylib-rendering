@@ -38,7 +38,7 @@ namespace raylib_rendering.Rendering
         // function draw that takes a callback
         public void Draw(DrawCallback callback, ImGuiCallback imGuiCallback)
         {
-            Assets.SetModelsShader(Assets.lightingShader);
+            Assets.SetModelsShader(Assets.defaultShader);
 
             Raylib.BeginTextureMode(this.target);
                 Raylib.ClearBackground(Color.WHITE);
@@ -74,7 +74,7 @@ namespace raylib_rendering.Rendering
             Raylib.EndTextureMode();
 
             // reaply default
-            Assets.SetModelsShader(Assets.lightingShader);
+            Assets.SetModelsShader(Assets.defaultShader);
 
 
 
