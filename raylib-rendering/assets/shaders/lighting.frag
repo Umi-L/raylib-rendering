@@ -19,68 +19,78 @@ out vec4 finalColor;
 #define     LIGHT_DIRECTIONAL       0
 #define     LIGHT_POINT             1
 
-struct MaterialProperty {
-    vec3 color;
-    int useSampler;
-    sampler2D sampler;
+struct LightCameraData {
+    vec3 CameraPosition;
+    sampler2D DepthTexture;
+    vec2 TextureSize;
+    mat4 VeiwProjectionMatrix;
 };
 
-struct Light {
-    int enabled;
-    int type;
-    vec3 position;
-    vec3 target;
-    vec4 color;
+struct LightData {
+    LightType Type;
+    vec3 Position;
+    vec3 Direction;
+    bool CastShadows;
+
+    int CameraDataCount;
+    LightCameraData CameraData[];
 };
 
 // Input lighting values
-uniform Light lights[MAX_LIGHTS];
+uniform LightData lights[MAX_LIGHTS];
 uniform vec4 ambient;
 uniform vec3 viewPos;
+uniform int lightsCount;
+
+float unpack(vec3 vector3) {
+
+    float x = 0.0;
+
+    if (vector3.r == 1.0){
+        if (vector3.g == 1.0){
+            x = vector3.b + 2.0;
+        } else {
+            x = vector3.g + 1.0;
+        }
+    } else {
+        x = vector3.r;
+    }
+
+    x /= 3;
+
+    return x;
+}
 
 void main()
 {
-    // Texel color fetching from texture sampler
+    const vec4 shadowColor = vec4(0.2, 0.2, 0.2, 1);
     vec4 texelColor = texture(texture0, fragTexCoord);
-    vec3 lightDot = vec3(0.0);
-    vec3 normal = normalize(fragNormal);
-    vec3 viewD = normalize(viewPos - fragPosition);
-    vec3 specular = vec3(0.0);
+    
+    for (int i = 0; i < lightsCount; i++){
+        LightData light = lights[i];
 
-    // NOTE: Implement here your fragment shader code
+        float lightDistance = length(light.Position - fragPosition);
 
-    for (int i = 0; i < MAX_LIGHTS; i++)
-    {
-        if (lights[i].enabled == 1)
-        {
-            vec3 light = vec3(0.0);
-
-            if (lights[i].type == LIGHT_DIRECTIONAL)
-            {
-                light = -normalize(lights[i].target - lights[i].position);
+        for (int j = 0; j < light.CameraDataCount; j++){
+            vec2 fragUVInDepth = vec2(0); //TODO figure out the matrix needed and add it here
+            
+            vec3 depthInLightColor = texture(light.CameraData[j].DepthTexture, fragUVInDepth).rgb;
+            
+            float depthInLight = unpack(depthInLightColor);
+            
+            if (depthInLight < lightDistance){
+                finalColor = texelColor - shadowColor;
+                
+                // clamp final color
+                finalColor.r = clamp(finalColor.r, 0.0, 1.0);
+                finalColor.g = clamp(finalColor.g, 0.0, 1.0);
+                finalColor.b = clamp(finalColor.b, 0.0, 1.0);
+                finalColor.a = clamp(finalColor.a, 0.0, 1.0);
+                
+                return;
             }
-
-            if (lights[i].type == LIGHT_POINT)
-            {
-                light = normalize(lights[i].position - fragPosition);
-            }
-
-            float NdotL = max(dot(normal, light), 0.0);
-            lightDot += lights[i].color.rgb*NdotL;
-
-            float specCo = 0.0;
-            if (NdotL > 0.0) specCo = pow(max(0.0, dot(viewD, reflect(-(light), normal))), 16.0); // 16 refers to shine
-            specular += specCo;
         }
     }
     
-    
-    
-    finalColor = (texelColor*((colDiffuse + vec4(specular, 1.0))*vec4(lightDot, 1.0)));
-    
-    // apply ambient
-    finalColor += texelColor*(ambient/10.0)*colDiffuse;
-
-    // Gamma correction
-    finalColor = pow(finalColor, vec4(1.0/2.2));
+    finalColor = texelColor;
 }

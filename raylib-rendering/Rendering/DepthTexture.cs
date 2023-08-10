@@ -1,9 +1,18 @@
-﻿using Raylib_cs;
+﻿using System.Numerics;
+using Raylib_cs;
+using raylib_rendering;
 
 namespace SpixelRenderer;
 
 public static class DepthTexture
 {
+    private static RenderTexture2D depthRenderTexture;
+
+    public static void Init()
+    {
+        depthRenderTexture = LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+    }
+    
     public static unsafe RenderTexture2D LoadRenderTextureDepthTex(int width, int height)
     {
         RenderTexture2D target = new RenderTexture2D();
@@ -57,5 +66,23 @@ public static class DepthTexture
             // queried and deleted before deleting framebuffer
             Rlgl.rlUnloadFramebuffer(target.id);
         }
+    }
+
+    public static Texture2D GetBufferFromRenderTexture(RenderTexture2D renderTexture)
+    {
+        // get depth buffer
+        Raylib.BeginTextureMode(depthRenderTexture);
+        {
+            Raylib.ClearBackground(Color.BLACK);
+
+            Raylib.BeginShaderMode(Assets.depthShader);
+            {
+                Raylib.DrawTextureRec(renderTexture.depth, new Rectangle(0, 0, renderTexture.depth.width, -renderTexture.depth.height), Vector2.Zero, Color.WHITE);
+            }
+            Raylib.EndShaderMode();
+        }
+        Raylib.EndTextureMode();
+
+        return depthRenderTexture.depth;
     }
 }

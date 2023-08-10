@@ -34,6 +34,7 @@ namespace raylib_rendering
             RenderTexture2D rtex = DepthTexture.LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
 
             Assets.Load();
+            DepthTexture.Init();
             
             // init RenderSystem
             RenderSystem renderSystem = new RenderSystem(new RenderPass[]
@@ -102,15 +103,10 @@ namespace raylib_rendering
 
                 renderSystem.Draw(delegate
                 {
-                    Raylib.BeginMode3D(camera);
-                    {
-                        Raylib.DrawModelEx(Assets.scarecrowModel, new Vector3(-2,0,0), new Vector3(0,1,0), runningrot, Vector3.One, Color.WHITE);
+                    Raylib.DrawModelEx(Assets.scarecrowModel, new Vector3(-2,0,0), new Vector3(0,1,0), runningrot, Vector3.One, Color.WHITE);
 
-                        scene.Draw(1f);
-                    }
-                    Raylib.EndMode3D();
-                },
-                
+                    scene.Draw(1f);
+                },camera,
                 delegate
                 {
                     ImGui.Text("Outline");
