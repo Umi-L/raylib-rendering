@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/julian/Projects/raylib-rendering/raylib-rendering/raylib-rendering.csproj": {}
+    "C:\\Users\\julia\\Projects\\raylib-rendering\\raylib-rendering\\raylib-rendering.csproj": {}
   },
   "projects": {
-    "/Users/julian/Projects/raylib-rendering/raylib-rendering/raylib-rendering.csproj": {
+    "C:\\Users\\julia\\Projects\\raylib-rendering\\raylib-rendering\\raylib-rendering.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/julian/Projects/raylib-rendering/raylib-rendering/raylib-rendering.csproj",
+        "projectUniqueName": "C:\\Users\\julia\\Projects\\raylib-rendering\\raylib-rendering\\raylib-rendering.csproj",
         "projectName": "raylib-rendering",
-        "projectPath": "/Users/julian/Projects/raylib-rendering/raylib-rendering/raylib-rendering.csproj",
-        "packagesPath": "/Users/julian/.nuget/packages/",
-        "outputPath": "/Users/julian/Projects/raylib-rendering/raylib-rendering/obj/",
+        "projectPath": "C:\\Users\\julia\\Projects\\raylib-rendering\\raylib-rendering\\raylib-rendering.csproj",
+        "packagesPath": "C:\\Users\\julia\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\julia\\Projects\\raylib-rendering\\raylib-rendering\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/julian/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\julia\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
@@ -68,11 +68,15 @@
               "version": "[6.0.20, 6.0.20]"
             },
             {
-              "name": "Microsoft.NETCore.App.Host.osx-x64",
+              "name": "Microsoft.NETCore.App.Host.win-x64",
               "version": "[6.0.20, 6.0.20]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.20, 6.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
               "version": "[6.0.20, 6.0.20]"
             }
           ],
@@ -81,7 +85,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/Users/julian/.dotnet/sdk/7.0.306/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\julia\\.dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
         }
       }
     }

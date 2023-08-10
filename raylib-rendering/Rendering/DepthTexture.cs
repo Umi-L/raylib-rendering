@@ -68,7 +68,7 @@ public static class DepthTexture
         }
     }
 
-    public static Texture2D GetBufferFromRenderTexture(RenderTexture2D renderTexture)
+    public static Texture2D GetBufferFromRenderTexture(Texture2D depth)
     {
         // get depth buffer
         Raylib.BeginTextureMode(depthRenderTexture);
@@ -77,12 +77,12 @@ public static class DepthTexture
 
             Raylib.BeginShaderMode(Assets.depthShader);
             {
-                Raylib.DrawTextureRec(renderTexture.depth, new Rectangle(0, 0, renderTexture.depth.width, -renderTexture.depth.height), Vector2.Zero, Color.WHITE);
+                Raylib.DrawTextureRec(depth, new Rectangle(0, 0, depth.width, -depth.height), Vector2.Zero, Color.WHITE);
             }
             Raylib.EndShaderMode();
         }
         Raylib.EndTextureMode();
 
-        return depthRenderTexture.depth;
+        return depthRenderTexture.texture;
     }
 }

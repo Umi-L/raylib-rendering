@@ -52,9 +52,7 @@ namespace raylib_rendering.Rendering
                 callbackWithCam();
             Raylib.EndTextureMode();
 
-            Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.target);
-
-
+            Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.target.depth);
 
             // apply normalShader
             Assets.SetModelsShader(Assets.normalShader);

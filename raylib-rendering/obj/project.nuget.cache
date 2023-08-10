@@ -1,18 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "r6ul0eyx1ObIy5xHCgM8Nf+nummDKZaK2LJJ5qFC6EZzji6tYCX0WrhKueRZNilbcl8kXhtbz2XUTloAjb4zBQ==",
+  "dgSpecHash": "xsv26OKmp8tFClzqj0H6UmXfddGBTeWq3a4QgtoSpMFUKUGg52ZbVL8v1PZddmPbQuGoJuZsSwIIMs2vU4Ejow==",
   "success": true,
-  "projectFilePath": "/Users/julian/Projects/raylib-rendering/raylib-rendering/raylib-rendering.csproj",
+  "projectFilePath": "C:\\Users\\julia\\Projects\\raylib-rendering\\raylib-rendering\\raylib-rendering.csproj",
   "expectedPackageFiles": [
-    "/Users/julian/.nuget/packages/imgui.net/1.89.7.1/imgui.net.1.89.7.1.nupkg.sha512",
-    "/Users/julian/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
-    "/Users/julian/.nuget/packages/raylib-cs/4.5.0.3/raylib-cs.4.5.0.3.nupkg.sha512",
-    "/Users/julian/.nuget/packages/system.buffers/4.4.0/system.buffers.4.4.0.nupkg.sha512",
-    "/Users/julian/.nuget/packages/system.numerics.vectors/4.5.0/system.numerics.vectors.4.5.0.nupkg.sha512",
-    "/Users/julian/.nuget/packages/system.runtime.compilerservices.unsafe/4.4.0/system.runtime.compilerservices.unsafe.4.4.0.nupkg.sha512",
-    "/Users/julian/.nuget/packages/microsoft.netcore.app.ref/6.0.20/microsoft.netcore.app.ref.6.0.20.nupkg.sha512",
-    "/Users/julian/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.20/microsoft.aspnetcore.app.ref.6.0.20.nupkg.sha512",
-    "/Users/julian/.nuget/packages/microsoft.netcore.app.host.osx-x64/6.0.20/microsoft.netcore.app.host.osx-x64.6.0.20.nupkg.sha512"
+    "C:\\Users\\julia\\.nuget\\packages\\imgui.net\\1.89.7.1\\imgui.net.1.89.7.1.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\raylib-cs\\4.5.0.3\\raylib-cs.4.5.0.3.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\system.buffers\\4.4.0\\system.buffers.4.4.0.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.4.0\\system.runtime.compilerservices.unsafe.4.4.0.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.20\\microsoft.netcore.app.ref.6.0.20.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.20\\microsoft.windowsdesktop.app.ref.6.0.20.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.20\\microsoft.aspnetcore.app.ref.6.0.20.nupkg.sha512",
+    "C:\\Users\\julia\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.20\\microsoft.netcore.app.host.win-x64.6.0.20.nupkg.sha512"
   ],
   "logs": []
 }

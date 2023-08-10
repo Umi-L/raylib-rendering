@@ -72,9 +72,13 @@ void main()
         float lightDistance = length(light.Position - fragPosition);
 
         for (int j = 0; j < light.CameraDataCount; j++){
-            vec2 fragUVInDepth = vec2(0); //TODO figure out the matrix needed and add it here
+            vec4 clipSpacePosition = light.CameraData[j].VeiwProjectionMatrix * vec4(fragPosition, 1.0);
             
-            vec3 depthInLightColor = texture(light.CameraData[j].DepthTexture, fragUVInDepth).rgb;
+            vec3 ndcSpacePosition = clipSpacePosition.xyz / clipSpacePosition.w;
+            
+            vec2 fragUV = ndcSpacePosition.xy * 0.5 + 0.5;
+            
+            vec3 depthInLightColor = texture(light.CameraData[j].DepthTexture, fragUV).rgb;
             
             float depthInLight = unpack(depthInLightColor);
             
