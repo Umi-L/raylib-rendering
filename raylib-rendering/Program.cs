@@ -5,6 +5,7 @@ using raylib_rendering.Rendering;
 using SpixelRenderer;
 using System.Numerics;
 using ImGuiNET;
+using raylib_rendering.Lighting;
 using Raylights_cs;
 
 namespace raylib_rendering
@@ -23,6 +24,8 @@ namespace raylib_rendering
         public static float hueShift = 0f;
         public static float saturationShift = 0.2f;
         public static float valueShift = 0.2f;
+        
+        public static float ambientLightLevel = 0.7f;
 
         public static void Main()
         {
@@ -39,9 +42,9 @@ namespace raylib_rendering
             // init RenderSystem
             RenderSystem renderSystem = new RenderSystem(new RenderPass[]
             {
-                new RenderPass(Assets.colourFilterShaderProgram),
+                // new RenderPass(Assets.colourFilterShaderProgram),
                 new RenderPass(Assets.outlineShaderProgram),
-                new RenderPass(Assets.paperShaderProgram),
+                // new RenderPass(Assets.paperShaderProgram),
                 // new RenderPass(Assets.testShaderProgram),
             });
 
@@ -56,24 +59,14 @@ namespace raylib_rendering
 
             var scene = SceneManager.LoadScene("assets/scenes/Scene1.txt");
 
-            // Using 4 point lights: Color.gold, Color.red, Color.green and Color.blue
-            Light[] lights = new Light[4];
-            lights[0] = Rlights.CreateLight(
-                0,
-                LightType.Directorional,
-                new Vector3(1, 1, 0),
-                Vector3.Zero,
-                new Color(255,255,255, 255),
-                Assets.lightingShader
-            );
-
-            lights[0].enabled = true;
 
             // ambient light level
             int ambientLoc = Raylib.GetShaderLocation(Assets.lightingShader, "ambient");
             float[] ambient = new[] { 0.7f, 0.7f, 0.7f, 1.0f };
             Raylib.SetShaderValue(Assets.lightingShader, ambientLoc, ambient, ShaderUniformDataType.SHADER_UNIFORM_VEC4);
 
+            DirectionalLight directionalLight = new DirectionalLight(new Vector3(10, 100, 10), new Vector3(-0.5f,-1,-0.5f));
+            
             rlImGui.Setup(true);
 
             while (!Raylib.WindowShouldClose())
@@ -84,14 +77,6 @@ namespace raylib_rendering
                 CustomCamera.UpdateCamera(ref camera);
 
                 runningrot += 0.1f;
-
-                if (Raylib.IsKeyPressed(KeyboardKey.KEY_Y))
-                {
-                    lights[0].enabled = !lights[0].enabled;
-                }
-
-                // Update light values (actually, only enable/disable them)
-                Rlights.UpdateLightValues(Assets.lightingShader, lights[0]);
 
                 unsafe
                 {
@@ -152,6 +137,12 @@ namespace raylib_rendering
                     if (ImGui.SliderFloat("lightnessShift", ref valueShift, -1f, 1f))
                     {
                         Assets.colourFilterShaderProgram.SetShaderUniform("lightnessShift", valueShift);
+                    }
+
+                    if (ImGui.SliderFloat("ambientLight", ref ambientLightLevel, 0, 1))
+                    {
+                        ambient = new[] { ambientLightLevel, ambientLightLevel, ambientLightLevel, 1.0f };
+                        Raylib.SetShaderValue(Assets.lightingShader, ambientLoc, ambient, ShaderUniformDataType.SHADER_UNIFORM_VEC4);
                     }
                     
                     ImGui.Text("SceneInfo");

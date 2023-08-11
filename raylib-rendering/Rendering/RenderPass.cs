@@ -10,7 +10,7 @@ using SpixelRenderer;
 
 namespace raylib_rendering.Rendering
 {
-    internal class RenderPass
+    public class RenderPass
     {
         public ShaderProgram shader;
         public RenderTexture2D target;

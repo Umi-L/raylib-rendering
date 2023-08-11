@@ -3,7 +3,7 @@
 // Input vertex attributes (from vertex shader)
 in vec3 fragPosition;
 in vec2 fragTexCoord;
-//in vec4 fragColor;
+in vec4 fragColor;
 in vec3 fragNormal;
 
 // Input uniform values
@@ -16,28 +16,32 @@ out vec4 finalColor;
 // NOTE: Add here your custom variables
 
 #define     MAX_LIGHTS              4
+#define    MAX_LIGHT_CAMERAS       4
+
 #define     LIGHT_DIRECTIONAL       0
 #define     LIGHT_POINT             1
 
 struct LightCameraData {
-    vec3 CameraPosition;
-    sampler2D DepthTexture;
-    vec2 TextureSize;
-    mat4 VeiwProjectionMatrix;
+    vec3 cameraPosition;
+    vec2 textureSize;
+    mat4 veiwProjectionMatrix;
 };
 
 struct LightData {
-    LightType Type;
-    vec3 Position;
-    vec3 Direction;
-    bool CastShadows;
+    int type;
+    vec3 position;
+    vec3 direction;
+    bool castShadows;
 
-    int CameraDataCount;
-    LightCameraData CameraData[];
+    int cameraDataCount;
+    LightCameraData cameraData[MAX_LIGHT_CAMERAS];
 };
 
 // Input lighting values
 uniform LightData lights[MAX_LIGHTS];
+uniform sampler2D depthTextures[MAX_LIGHTS*MAX_LIGHT_CAMERAS];
+
+
 uniform vec4 ambient;
 uniform vec3 viewPos;
 uniform int lightsCount;
@@ -63,38 +67,41 @@ float unpack(vec3 vector3) {
 
 void main()
 {
+
     const vec4 shadowColor = vec4(0.2, 0.2, 0.2, 1);
     vec4 texelColor = texture(texture0, fragTexCoord);
+
+    
     
     for (int i = 0; i < lightsCount; i++){
+        
         LightData light = lights[i];
 
-        float lightDistance = length(light.Position - fragPosition);
-
-        for (int j = 0; j < light.CameraDataCount; j++){
-            vec4 clipSpacePosition = light.CameraData[j].VeiwProjectionMatrix * vec4(fragPosition, 1.0);
+        float lightDistance = length(light.position - fragPosition);
+        
+        for (int j = 0; j < light.cameraDataCount; j++){
+            
+            vec4 clipSpacePosition = light.cameraData[j].veiwProjectionMatrix * vec4(fragPosition, 1.0);
             
             vec3 ndcSpacePosition = clipSpacePosition.xyz / clipSpacePosition.w;
             
-            vec2 fragUV = ndcSpacePosition.xy * 0.5 + 0.5;
+            vec2 fragUV = (ndcSpacePosition.xy + 1.5) * 0.5;
             
-            vec3 depthInLightColor = texture(light.CameraData[j].DepthTexture, fragUV).rgb;
-            
+            int shadowMapIndex = i * MAX_LIGHT_CAMERAS + j;
+            vec3 depthInLightColor = texture(depthTextures[shadowMapIndex], fragUV).rgb;
+
             float depthInLight = unpack(depthInLightColor);
+
+            finalColor = texture(depthTextures[shadowMapIndex], fragTexCoord);
+            return;
             
             if (depthInLight < lightDistance){
-                finalColor = texelColor - shadowColor;
-                
-                // clamp final color
-                finalColor.r = clamp(finalColor.r, 0.0, 1.0);
-                finalColor.g = clamp(finalColor.g, 0.0, 1.0);
-                finalColor.b = clamp(finalColor.b, 0.0, 1.0);
-                finalColor.a = clamp(finalColor.a, 0.0, 1.0);
-                
+                finalColor = texelColor*colDiffuse*fragColor*ambient*shadowColor;
                 return;
             }
         }
     }
     
-    finalColor = texelColor;
+    
+    finalColor = texelColor*colDiffuse*fragColor*ambient;
 }

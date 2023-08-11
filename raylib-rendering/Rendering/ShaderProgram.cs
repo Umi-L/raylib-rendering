@@ -9,7 +9,7 @@ using Raylib_cs;
 
 namespace raylib_rendering.Rendering
 {
-    struct ShaderProgramUniform
+    public struct ShaderProgramUniform
     {
         public ShaderUniformDataType DataType;
         public dynamic value;
@@ -17,7 +17,7 @@ namespace raylib_rendering.Rendering
         public int location;
     }
 
-    internal class ShaderProgram
+    public class ShaderProgram
     {
         public Shader shader;
         public Dictionary<string, ShaderProgramUniform> uniforms;

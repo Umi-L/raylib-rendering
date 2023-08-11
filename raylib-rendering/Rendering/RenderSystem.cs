@@ -7,13 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using ImGuiNET;
 using Raylib_cs;
+using raylib_rendering.Debug;
 using raylib_rendering.Lighting;
 using rlImGui_cs;
 using SpixelRenderer;
 
 namespace raylib_rendering.Rendering
 {
-    internal class RenderSystem
+    public class RenderSystem
     {
         public List<RenderPass> passes;
         public RenderTexture2D target;
@@ -44,10 +45,15 @@ namespace raylib_rendering.Rendering
                 Raylib.EndMode3D();
             };
             
-            Assets.SetModelsShader(Assets.defaultShader);
+            LightManager.UpdateLightsAndSetShaderValues(callback);
+
+            Assets.SetModelsShader(Assets.lightingShader);
 
             Raylib.BeginTextureMode(this.target);
+            
+                // Update light shader value
                 Raylib.ClearBackground(Color.WHITE);
+                
 
                 callbackWithCam();
             Raylib.EndTextureMode();
@@ -66,10 +72,8 @@ namespace raylib_rendering.Rendering
             }
             Raylib.EndTextureMode();
 
-            // reaply default
-            Assets.SetModelsShader(Assets.defaultShader);
-
-
+            // reapply default
+            Assets.SetModelsShader(Assets.lightingShader);
 
             // draw passes
             RenderTexture2D currentTarget = this.target;
@@ -86,6 +90,8 @@ namespace raylib_rendering.Rendering
             rlImGui.Begin();
 
             imGuiCallback();
+            
+            DebugDraw.Draw();
 
             float ratio = ImGui.GetWindowWidth() / depthTexture.width;
 

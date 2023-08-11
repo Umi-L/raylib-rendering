@@ -21,7 +21,7 @@ namespace raylib_rendering
         public static Shader paperShader;
         public static Shader lightingShader;
         public static Shader colourFilterShader;
-
+        
         public static ShaderProgram outlineShaderProgram;
         public static ShaderProgram paperShaderProgram;
         public static ShaderProgram colourFilterShaderProgram;
@@ -52,7 +52,7 @@ namespace raylib_rendering
             paperShader = Raylib.LoadShader(null, "assets/shaders/paper.frag");
             lightingShader = Raylib.LoadShader("assets/shaders/lighting.vert", "assets/shaders/lighting.frag");
             colourFilterShader = Raylib.LoadShader(null, "assets/shaders/colourFilter.frag");
-
+            
             unsafe
             {
                 normalShader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_MODEL] = Raylib.GetShaderLocation(normalShader, "matModel");
