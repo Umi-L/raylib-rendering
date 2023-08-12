@@ -70,7 +70,10 @@ void main()
 
     const vec4 shadowColor = vec4(0.2, 0.2, 0.2, 1);
     vec4 texelColor = texture(texture0, fragTexCoord);
-
+    
+    
+    finalColor = texture(depthTextures[0], fragTexCoord);
+    return;
     
     
     for (int i = 0; i < lightsCount; i++){
@@ -85,14 +88,14 @@ void main()
             
             vec3 ndcSpacePosition = clipSpacePosition.xyz / clipSpacePosition.w;
             
-            vec2 fragUV = (ndcSpacePosition.xy + 1.5) * 0.5;
+            vec2 fragUV = ndcSpacePosition.xy * 0.5 + 0.5;
             
             int shadowMapIndex = i * MAX_LIGHT_CAMERAS + j;
             vec3 depthInLightColor = texture(depthTextures[shadowMapIndex], fragUV).rgb;
 
             float depthInLight = unpack(depthInLightColor);
-
-            finalColor = texture(depthTextures[shadowMapIndex], fragTexCoord);
+            
+            finalColor =  texture(depthTextures[shadowMapIndex], fragTexCoord);
             return;
             
             if (depthInLight < lightDistance){

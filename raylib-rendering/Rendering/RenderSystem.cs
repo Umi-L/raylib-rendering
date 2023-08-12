@@ -38,6 +38,8 @@ namespace raylib_rendering.Rendering
         // function draw that takes a callback
         public void Draw(DrawCallback callback, Camera3D mainCamera, ImGuiCallback imGuiCallback)
         {
+            LightManager.UpdateLights(callback);
+            
             DrawCallback callbackWithCam = delegate
             {
                 Raylib.BeginMode3D(mainCamera);
@@ -45,17 +47,23 @@ namespace raylib_rendering.Rendering
                 Raylib.EndMode3D();
             };
             
-            LightManager.UpdateLightsAndSetShaderValues(callback);
-
-            Assets.SetModelsShader(Assets.lightingShader);
-
+            DrawCallback callbackWithCamAndLights = delegate
+            {
+                Raylib.BeginMode3D(mainCamera);
+                LightManager.SetShaderValues();
+                Assets.SetModelsShader(Assets.lightingShader);
+                callback();
+                Raylib.EndMode3D();
+            };
+            
+            
             Raylib.BeginTextureMode(this.target);
             
                 // Update light shader value
                 Raylib.ClearBackground(Color.WHITE);
                 
 
-                callbackWithCam();
+                callbackWithCamAndLights();
             Raylib.EndTextureMode();
 
             Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.target.depth);
@@ -73,7 +81,7 @@ namespace raylib_rendering.Rendering
             Raylib.EndTextureMode();
 
             // reapply default
-            Assets.SetModelsShader(Assets.lightingShader);
+            // Assets.SetModelsShader(Assets.lightingShader);
 
             // draw passes
             RenderTexture2D currentTarget = this.target;

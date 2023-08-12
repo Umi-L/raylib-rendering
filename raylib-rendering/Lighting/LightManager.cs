@@ -16,6 +16,8 @@ public class LightManager
     public static int MaxLightCameras = 4;
     
     public static  int LightsCountLoc = -1;
+
+    private static List<LightData> LightDatas = new List<LightData>();
     
 
     public enum LightType
@@ -54,7 +56,7 @@ public class LightManager
         public int[] DepthTextureLocs;
     }
 
-    public static void UpdateLightsAndSetShaderValues(RenderSystem.DrawCallback drawCallback)
+    public static void UpdateLights(RenderSystem.DrawCallback drawCallback)
     {
 
         if (LightsCountLoc == -1)
@@ -62,18 +64,21 @@ public class LightManager
             LightsCountLoc = Raylib.GetShaderLocation(Assets.lightingShader, "lightsCount");
         }
         
-        List<LightData> lightData = new List<LightData>();
-        
         foreach (Light light in Lights)
         {
-            lightData.Add(light.UpdateLight(drawCallback));
+            LightDatas.Add(light.UpdateLight(drawCallback));
         }
+    }
 
-        Raylib.SetShaderValue(Assets.lightingShader, LightsCountLoc, lightData.Count, ShaderUniformDataType.SHADER_UNIFORM_INT);
-        foreach (LightData data in lightData)
+    public static void SetShaderValues()
+    {
+        Raylib.SetShaderValue(Assets.lightingShader, LightsCountLoc, LightDatas.Count, ShaderUniformDataType.SHADER_UNIFORM_INT);
+        foreach (LightData data in LightDatas)
         {
             SetLightShaderValue(data);
         }
+        
+        LightDatas.Clear();
     }
 
     public static void SetLightShaderValue(LightData lightData)
@@ -92,6 +97,7 @@ public class LightManager
             Raylib.SetShaderValue(Assets.lightingShader, cameraData.TextureSizeLoc, cameraData.TextureSize, ShaderUniformDataType.SHADER_UNIFORM_VEC2);
             Raylib.SetShaderValueMatrix(Assets.lightingShader, cameraData.ViewProjectionMatrixLoc, cameraData.ViewProjectionMatrix);
             
+            Console.WriteLine($"Setting depth texture at index {i} to loc {lightData.DepthTextureLocs[i]}");
             Raylib.SetShaderValueTexture(Assets.lightingShader, lightData.DepthTextureLocs[i], cameraData.DepthTexture);
             
             DebugDraw.AddImGuiCallback(delegate

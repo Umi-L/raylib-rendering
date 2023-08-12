@@ -32,7 +32,7 @@ namespace raylib_rendering
 
             float runningrot = 0;
 
-            Raylib.InitWindow(1200, 800, "Hello World");
+            Raylib.InitWindow(1200, 800, "Raylib-Rendering");
 
             RenderTexture2D rtex = DepthTexture.LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
 
@@ -43,7 +43,7 @@ namespace raylib_rendering
             RenderSystem renderSystem = new RenderSystem(new RenderPass[]
             {
                 // new RenderPass(Assets.colourFilterShaderProgram),
-                new RenderPass(Assets.outlineShaderProgram),
+                // new RenderPass(Assets.outlineShaderProgram),
                 // new RenderPass(Assets.paperShaderProgram),
                 // new RenderPass(Assets.testShaderProgram),
             });

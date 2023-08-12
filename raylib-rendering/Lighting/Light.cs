@@ -43,20 +43,20 @@ public abstract class Light
             var lightCameraLocData = new LightCameraLocData();
 
             lightCameraLocData.CameraPositionLoc =
-                Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{i}].cameraPosition");
+                Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{this.Index}].cameraData[{i}].cameraPosition");
             
             lightCameraLocData.TextureSizeLoc =
-                Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{i}].textureSize");
+                Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{this.Index}].cameraData[{i}].textureSize");
             
             lightCameraLocData.ViewProjectionMatrixLoc =
-                Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{i}].viewProjectionMatrix");
+                Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{this.Index}].cameraData[{i}].viewProjectionMatrix");
 
             LightCameraLocs.Add(lightCameraLocData);
         }
         
         depthTextureLocs = new int[LightManager.MaxLightCameras];
         
-        for (int i = 0; i < LightManager.MaxLightCameras; i++)
+        for (int i = 0; i < count; i++)
         {
             depthTextureLocs[i] = Raylib.GetShaderLocation(Assets.lightingShader, $"depthTextures[{LightManager.Lights.IndexOf(this) * LightManager.MaxLightCameras + i}]");
         }

@@ -20,12 +20,13 @@ public class DirectionalLight : Light
             CameraProjection.CAMERA_ORTHOGRAPHIC
         );
         
+        LightManager.addLight(this);
+        
         InitCameraLocs(1);
         
         depthRenderTexture = DepthTexture.LoadRenderTextureDepthTex(1024, 1024);
         secondDepthRenderTexture = DepthTexture.LoadRenderTextureDepthTex(1024, 1024);
         
-        LightManager.addLight(this);
     }
 
     private Camera3D Camera;
@@ -93,9 +94,7 @@ public class DirectionalLight : Light
                         CameraPosition = this.Position,
                         DepthTexture = depthTexture,
                         TextureSize = new Vector2(depthTexture.width, depthTexture.height),
-                        ViewProjectionMatrix = Raylib.GetCameraViewMatrix(cameraPtr) *
-                                               Raylib.GetCameraProjectionMatrix(cameraPtr, Camera.fovy),
-                        
+                        ViewProjectionMatrix = Raylib.GetCameraProjectionMatrix(cameraPtr, Camera.fovy) * Raylib.GetCameraViewMatrix(cameraPtr),
                         ViewProjectionMatrixLoc = this.LightCameraLocs[0].ViewProjectionMatrixLoc,
                         CameraPositionLoc = this.LightCameraLocs[0].CameraPositionLoc,
                         TextureSizeLoc = this.LightCameraLocs[0].TextureSizeLoc,
