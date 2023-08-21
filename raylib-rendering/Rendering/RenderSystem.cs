@@ -49,8 +49,8 @@ namespace raylib_rendering.Rendering
             
             DrawCallback callbackWithCamAndLights = delegate
             {
-                Raylib.BeginMode3D(mainCamera);
                 LightManager.SetShaderValues();
+                Raylib.BeginMode3D(mainCamera);
                 Assets.SetModelsShader(Assets.lightingShader);
                 callback();
                 Raylib.EndMode3D();

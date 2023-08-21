@@ -87,7 +87,7 @@ namespace raylib_rendering.Rendering
                 
             // Console.WriteLine($"Angle: {angle}; Axis: {axis} id {entity.id} q.w {q.W} funnyNumber {funnyNumber}");
                 
-            Raylib.DrawModelEx(model, newPosition * scale, axis, angle, newScale * scale, Color.WHITE);
+            RewrittenFunctions.DrawModelEx(model, newPosition * scale, axis, angle, newScale * scale, Color.WHITE);
         }
 
         public void DebugInfo()

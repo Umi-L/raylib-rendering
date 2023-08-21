@@ -58,7 +58,7 @@ public abstract class Light
         
         for (int i = 0; i < count; i++)
         {
-            depthTextureLocs[i] = Raylib.GetShaderLocation(Assets.lightingShader, $"depthTextures[{LightManager.Lights.IndexOf(this) * LightManager.MaxLightCameras + i}]");
+            depthTextureLocs[i] = Raylib.GetShaderLocation(Assets.lightingShader, $"depthTexture");
         }
 
     }

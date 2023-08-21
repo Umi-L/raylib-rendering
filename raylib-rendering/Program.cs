@@ -88,7 +88,7 @@ namespace raylib_rendering
 
                 renderSystem.Draw(delegate
                 {
-                    Raylib.DrawModelEx(Assets.scarecrowModel, new Vector3(-2,0,0), new Vector3(0,1,0), runningrot, Vector3.One, Color.WHITE);
+                    RewrittenFunctions.DrawModelEx(Assets.scarecrowModel, new Vector3(-2,0,0), new Vector3(0,1,0), runningrot, Vector3.One, Color.WHITE);
 
                     scene.Draw(1f);
                 },camera,

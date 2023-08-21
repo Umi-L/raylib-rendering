@@ -73,6 +73,7 @@ public class LightManager
     public static void SetShaderValues()
     {
         Raylib.SetShaderValue(Assets.lightingShader, LightsCountLoc, LightDatas.Count, ShaderUniformDataType.SHADER_UNIFORM_INT);
+        
         foreach (LightData data in LightDatas)
         {
             SetLightShaderValue(data);
@@ -83,6 +84,10 @@ public class LightManager
 
     public static void SetLightShaderValue(LightData lightData)
     {
+        
+        // log all the light data
+        Console.WriteLine($"Setting light data: {lightData.Type} {lightData.Position} {lightData.Direction} {lightData.CastShadows} {lightData.CameraDataCount}");
+        
         Raylib.SetShaderValue(Assets.lightingShader, lightData.TypeLoc, (int)lightData.Type, ShaderUniformDataType.SHADER_UNIFORM_INT);
         Raylib.SetShaderValue(Assets.lightingShader, lightData.PositionLoc, lightData.Position, ShaderUniformDataType.SHADER_UNIFORM_VEC3);
         Raylib.SetShaderValue(Assets.lightingShader, lightData.DirectionLoc, lightData.Direction, ShaderUniformDataType.SHADER_UNIFORM_VEC3);

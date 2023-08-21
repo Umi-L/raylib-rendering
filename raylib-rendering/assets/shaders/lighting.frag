@@ -40,6 +40,7 @@ struct LightData {
 // Input lighting values
 uniform LightData lights[MAX_LIGHTS];
 uniform sampler2D depthTextures[MAX_LIGHTS*MAX_LIGHT_CAMERAS];
+uniform sampler2D depthTexture;
 
 
 uniform vec4 ambient;
@@ -72,8 +73,14 @@ void main()
     vec4 texelColor = texture(texture0, fragTexCoord);
     
     
-    finalColor = texture(depthTextures[0], fragTexCoord);
+//    finalColor = texture(depthTextures[0], fragTexCoord);
+    
+
+    finalColor =  texture(depthTexture, fragTexCoord);
     return;
+
+    //    finalColor = vec4(0, 0, 1, 1);
+//    return;
     
     
     for (int i = 0; i < lightsCount; i++){
