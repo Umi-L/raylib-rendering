@@ -3,43 +3,52 @@ using Raylib_cs;
 
 namespace raylib_rendering;
 
-public class RewrittenFunctions
+public static class RewrittenFunctions
 {
-    public const int MAX_MATERIAL_MAPS = 12;
-    public const float DEG2RAD = (float)(Math.PI / 180.0f);
+    public const int MaxMaterialMaps = 12;
+    public const float Deg2Rad = (float)(Math.PI / 180.0f);
     
+    // custom version of the Raylib DrawMesh function. This excludes opengl 1.1 support.
     public static unsafe void DrawMesh(Mesh mesh, Material material, Matrix4x4 transform)
     {
+        
         // Bind shader program
         Rlgl.rlEnableShader(material.shader.id);
 
         // Send required data to shader (matrices, values)
         //-----------------------------------------------------
         // Upload to shader material.colDiffuse
-        if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_COLOR_DIFFUSE] != -1)
+        if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_COLOR_DIFFUSE] != -1)
         {
-            float[] values =  {
-                (float)material.maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color.r / 255.0f,
-                (float)material.maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color.g / 255.0f,
-                (float)material.maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color.b / 255.0f,
-                (float)material.maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color.a / 255.0f
+            float[] values = {
+                material.maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color.r / 255.0f,
+                material.maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color.g / 255.0f,
+                material.maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color.b / 255.0f,
+                material.maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color.a / 255.0f
             };
 
-            Rlgl.rlSetUniform(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_COLOR_DIFFUSE], &values, (int)(int)ShaderUniformDataType.SHADER_UNIFORM_VEC4, 1);
+            fixed (float* ptr = values)
+            {
+                Rlgl.rlSetUniform(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_COLOR_DIFFUSE], ptr,
+                    (int)ShaderUniformDataType.SHADER_UNIFORM_VEC4, 1);
+            }
         }
 
         // Upload to shader material.colSpecular (if location available)
-        if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR] != -1)
+        if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR] != -1)
         {
             float[] values =  {
-                (float)material.maps[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR].color.r / 255.0f,
-                (float)material.maps[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR].color.g / 255.0f,
-                (float)material.maps[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR].color.b / 255.0f,
-                (float)material.maps[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR].color.a / 255.0f
+                material.maps[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR].color.r / 255.0f,
+                material.maps[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR].color.g / 255.0f,
+                material.maps[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR].color.b / 255.0f,
+                material.maps[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR].color.a / 255.0f
+            };
+            
+            fixed (float* ptr = values)
+            {
+                Rlgl.rlSetUniform(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR], ptr,
+                    (int)ShaderUniformDataType.SHADER_UNIFORM_VEC4, 1);
             }
-            ;
-
-            Rlgl.rlSetUniform(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_COLOR_SPECULAR], &values, (int)(int)ShaderUniformDataType.SHADER_UNIFORM_VEC4, 1);
         }
 
         // Get a copy of current matrices to work with,
@@ -47,19 +56,19 @@ public class RewrittenFunctions
         // NOTE: At this point the modelview matrix just contains the view matrix (camera)
         // That's because BeginMode3D() sets it and there is no model-drawing function
         // that modifies it, all use Rlgl.rlPushMatrix() and Rlgl.rlPopMatrix()
-        Matrix4x4 matModel = Raymath.MatrixIdentity();
+        Matrix4x4 matModel;
         Matrix4x4 matView = Rlgl.rlGetMatrixModelview();
-        Matrix4x4 matModelView = Raymath.MatrixIdentity();
+        Matrix4x4 matModelView;
         Matrix4x4 matProjection = Rlgl.rlGetMatrixProjection();
 
         // Upload view and projection matrices (if locations available)
-        if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_VIEW] != -1)
+        if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_VIEW] != -1)
             Rlgl.rlSetUniformMatrix(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_VIEW], matView);
-        if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_PROJECTION] != -1)
+        if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_PROJECTION] != -1)
             Rlgl.rlSetUniformMatrix(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_PROJECTION], matProjection);
 
         // Model transformation matrix is sent to shader uniform location: (int)ShaderLocationIndex.SHADER_LOC_MATRIX_MODEL
-        if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_MODEL] != -1)
+        if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_MODEL] != -1)
             Rlgl.rlSetUniformMatrix(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_MODEL], transform);
 
         // Accumulate several model transformations:
@@ -72,12 +81,13 @@ public class RewrittenFunctions
         matModelView = Raymath.MatrixMultiply(matModel, matView);
 
         // Upload model normal matrix (if locations available)
-        if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_NORMAL] != -1)
+        if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_NORMAL] != -1)
             Rlgl.rlSetUniformMatrix(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MATRIX_NORMAL], Raymath.MatrixTranspose(Raymath.MatrixInvert(matModel)));
         //-----------------------------------------------------
 
+        
         // Bind active texture maps (if available)
-        for (int i = 0; i < MAX_MATERIAL_MAPS; i++)
+        for (int i = 0; i < MaxMaterialMaps; i++)
         {
             if (material.maps[i].texture.id > 0)
             {
@@ -90,7 +100,7 @@ public class RewrittenFunctions
                     (i == (int)MaterialMapIndex.MATERIAL_MAP_CUBEMAP)) Rlgl.rlEnableTextureCubemap(material.maps[i].texture.id);
                 else Rlgl.rlEnableTexture(material.maps[i].texture.id);
 
-                Rlgl.rlSetUniform(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MAP_DIFFUSE + i], &i, (int)(int)(int)ShaderUniformDataType.SHADER_UNIFORM_INT, 1);
+                Rlgl.rlSetUniform(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MAP_DIFFUSE + i], &i, (int)ShaderUniformDataType.SHADER_UNIFORM_INT, 1);
             }
         }
 
@@ -110,7 +120,7 @@ public class RewrittenFunctions
             Rlgl.rlSetVertexAttribute((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_TEXCOORD01], 2, Rlgl.RL_FLOAT, 0, 0, (void *)0);
             Rlgl.rlEnableVertexAttribute((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_TEXCOORD01]);
 
-            if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_NORMAL] != -1)
+            if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_NORMAL] != -1)
             {
                 // Bind mesh VBO data: vertex normals (shader-location = 2)
                 Rlgl.rlEnableVertexBuffer(mesh.vboId[2]);
@@ -119,7 +129,7 @@ public class RewrittenFunctions
             }
 
             // Bind mesh VBO data: vertex colors (shader-location = 3, if available)
-            if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_COLOR] != -1)
+            if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_COLOR] != -1)
             {
                 if (mesh.vboId[3] != 0)
                 {
@@ -133,16 +143,21 @@ public class RewrittenFunctions
                     // WARNING: It could result in GPU undefined behaviour
                     float[] value =  {
                         1.0f, 1.0f, 1.0f, 1.0f
+                    };
+
+                    fixed (float* ptr = value)
+                    {
+                        Rlgl.rlSetVertexAttributeDefault(
+                            material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_COLOR], ptr,
+                            (int)ShaderAttributeDataType.SHADER_ATTRIB_VEC4, 4);
                     }
-                    ;
-                    Rlgl.rlSetVertexAttributeDefault(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_COLOR], &value,
-                        (int)ShaderAttributeDataType.SHADER_ATTRIB_VEC4, 4);
+
                     Rlgl.rlDisableVertexAttribute((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_COLOR]);
                 }
             }
 
             // Bind mesh VBO data: vertex tangents (shader-location = 4, if available)
-            if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_TANGENT] != -1)
+            if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_TANGENT] != -1)
             {
                 Rlgl.rlEnableVertexBuffer(mesh.vboId[4]);
                 Rlgl.rlSetVertexAttribute((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_TANGENT], 4, Rlgl.RL_FLOAT, 0, 0, (void *)0);
@@ -150,7 +165,7 @@ public class RewrittenFunctions
             }
 
             // Bind mesh VBO data: vertex texcoords2 (shader-location = 5, if available)
-            if ((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_TEXCOORD02] != -1)
+            if (material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_TEXCOORD02] != -1)
             {
                 Rlgl.rlEnableVertexBuffer(mesh.vboId[5]);
                 Rlgl.rlSetVertexAttribute((uint)material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_VERTEX_TEXCOORD02], 2, Rlgl.RL_FLOAT, 0, 0, (void *)0);
@@ -169,7 +184,7 @@ public class RewrittenFunctions
         for (int eye = 0; eye < eyeCount; eye++)
         {
             // Calculate model-view-projection matrix (MVP)
-            Matrix4x4 matModelViewProjection = Raymath.MatrixIdentity();
+            Matrix4x4 matModelViewProjection;
             if (eyeCount == 1) matModelViewProjection = Raymath.MatrixMultiply(matModelView, matProjection);
             else
             {
@@ -188,7 +203,7 @@ public class RewrittenFunctions
         }
 
         // Unbind all bound texture maps
-        for (int i = 0; i < MAX_MATERIAL_MAPS; i++)
+        for (int i = 0; i < MaxMaterialMaps; i++)
         {
             if (material.maps[i].texture.id > 0)
             {
@@ -222,7 +237,7 @@ public class RewrittenFunctions
         // Calculate transformation matrix from function parameters
         // Get transform matrix (rotation -> scale -> translation)
         Matrix4x4 matScale = Raymath.MatrixScale(scale.X, scale.Y, scale.Z);
-        Matrix4x4 matRotation = Raymath.MatrixRotate(rotationAxis, rotationAngle*DEG2RAD);
+        Matrix4x4 matRotation = Raymath.MatrixRotate(rotationAxis, rotationAngle*Deg2Rad);
         Matrix4x4 matTranslation = Raymath.MatrixTranslate(position.X, position.Y, position.Z);
 
         Matrix4x4 matTransform = Raymath.MatrixMultiply(Raymath.MatrixMultiply(matScale, matRotation), matTranslation);
@@ -235,10 +250,10 @@ public class RewrittenFunctions
             Color color = model.materials[model.meshMaterial[i]].maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color;
 
             Color colorTint = Color.WHITE;
-            colorTint.r = (byte)((((float)color.r/255.0f)*((float)tint.r/255.0f))*255.0f);
-            colorTint.g = (byte)((((float)color.g/255.0f)*((float)tint.g/255.0f))*255.0f);
-            colorTint.b = (byte)((((float)color.b/255.0f)*((float)tint.b/255.0f))*255.0f);
-            colorTint.a = (byte)((((float)color.a/255.0f)*((float)tint.a/255.0f))*255.0f);
+            colorTint.r = (byte)(((color.r/255.0f)*(tint.r/255.0f))*255.0f);
+            colorTint.g = (byte)(((color.g/255.0f)*(tint.g/255.0f))*255.0f);
+            colorTint.b = (byte)(((color.b/255.0f)*(tint.b/255.0f))*255.0f);
+            colorTint.a = (byte)(((color.a/255.0f)*(tint.a/255.0f))*255.0f);
 
             model.materials[model.meshMaterial[i]].maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color = colorTint;
             DrawMesh(model.meshes[i], model.materials[model.meshMaterial[i]], model.transform);
@@ -246,7 +261,7 @@ public class RewrittenFunctions
         }
     }
     
-    void DrawModel(Model model, Vector3 position, float scale, Color tint)
+    public static void DrawModel(Model model, Vector3 position, float scale, Color tint)
     {
         Vector3 vScale = new Vector3(scale);
         Vector3 rotationAxis = new Vector3(0, 1, 0);

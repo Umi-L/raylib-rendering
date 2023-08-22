@@ -73,11 +73,12 @@ void main()
     vec4 texelColor = texture(texture0, fragTexCoord);
     
     
-//    finalColor = texture(depthTextures[0], fragTexCoord);
+    finalColor = texelColor*colDiffuse*fragColor*ambient;
+    return;
     
 
-    finalColor =  texture(depthTexture, fragTexCoord);
-    return;
+//    finalColor =  texture(depthTexture, fragTexCoord);
+//    return;
 
     //    finalColor = vec4(0, 0, 1, 1);
 //    return;
