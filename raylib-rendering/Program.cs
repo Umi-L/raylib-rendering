@@ -42,9 +42,9 @@ namespace raylib_rendering
             // init RenderSystem
             RenderSystem renderSystem = new RenderSystem(new RenderPass[]
             {
-                // new RenderPass(Assets.colourFilterShaderProgram),
-                // new RenderPass(Assets.outlineShaderProgram),
-                // new RenderPass(Assets.paperShaderProgram),
+                new RenderPass(Assets.colourFilterShaderProgram),
+                new RenderPass(Assets.outlineShaderProgram),
+                new RenderPass(Assets.paperShaderProgram),
                 // new RenderPass(Assets.testShaderProgram),
             });
 
@@ -65,7 +65,7 @@ namespace raylib_rendering
             float[] ambient = new[] { 0.7f, 0.7f, 0.7f, 1.0f };
             Raylib.SetShaderValue(Assets.lightingShader, ambientLoc, ambient, ShaderUniformDataType.SHADER_UNIFORM_VEC4);
 
-            DirectionalLight directionalLight = new DirectionalLight(new Vector3(10, 100, 10), new Vector3(-0.5f,-1,-0.5f));
+            DirectionalLight directionalLight = new DirectionalLight(new Vector3(100, 100, 100), new Vector3(-1f,-1,-1f));
             
             rlImGui.Setup(true);
 
@@ -94,6 +94,10 @@ namespace raylib_rendering
                 },camera,
                 delegate
                 {
+                    // get fps
+                    float fps = Raylib.GetFPS();
+                    ImGui.Text($"fps: {fps}");
+                    
                     ImGui.Text("Outline");
                     if ( ImGui.SliderFloat("outlineWidth", ref outlineWidth, 0.1f, 10f))
                     {
@@ -149,8 +153,6 @@ namespace raylib_rendering
                     scene.DebugInfo();
                 }
                 );
-
-
             }
 
             rlImGui.Shutdown();

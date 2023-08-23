@@ -44,14 +44,14 @@ namespace raylib_rendering
             Console.WriteLine("Current working directory: " + Environment.CurrentDirectory);
 
             // load shaders
-            testShader = Raylib.LoadShader(null, "assets/shaders/test.frag");
-            depthShader = Raylib.LoadShader(null, "assets/shaders/depth.frag");
-            normalShader = Raylib.LoadShader("assets/shaders/norm.vert", "assets/shaders/norm.frag");
-            defaultShader = Raylib.LoadShader((string)null, (string)null);
-            outlineShader = Raylib.LoadShader(null, "assets/shaders/outline.frag");
-            paperShader = Raylib.LoadShader(null, "assets/shaders/paper.frag");
-            lightingShader = Raylib.LoadShader("assets/shaders/lighting.vert", "assets/shaders/lighting.frag");
-            colourFilterShader = Raylib.LoadShader(null, "assets/shaders/colourFilter.frag");
+            testShader = LoadShader(null, "assets/shaders/test.frag");
+            depthShader = LoadShader(null, "assets/shaders/depth.frag");
+            normalShader = LoadShader("assets/shaders/norm.vert", "assets/shaders/norm.frag");
+            defaultShader = LoadShader((string)null, (string)null);
+            outlineShader = LoadShader(null, "assets/shaders/outline.frag");
+            paperShader = LoadShader(null, "assets/shaders/paper.frag");
+            lightingShader = LoadShader("assets/shaders/lighting.vert", "assets/shaders/lighting.frag");
+            colourFilterShader = LoadShader(null, "assets/shaders/colourFilter.frag");
             
             unsafe
             {
@@ -172,6 +172,18 @@ namespace raylib_rendering
             // unload textures
 
             Console.WriteLine("---------------- Finished Unloading Assets ----------------");
+        }
+        
+        public static Shader LoadShader(string? vertexPath, string? fragmentPath)
+        {
+            // load text file
+            string? vertexText = (vertexPath != null) ? File.ReadAllText(vertexPath) : null;
+            string? fragmentText = (fragmentPath != null) ? File.ReadAllText(fragmentPath) : null;
+            
+            // load from mem
+            Shader shader = Raylib.LoadShaderFromMemory(vertexText, fragmentText);
+
+            return shader;
         }
     }
 }

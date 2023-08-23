@@ -13,6 +13,9 @@ public abstract class Light
     public int CameraDataCountLoc;
     public int[] depthTextureLocs;
 
+    public const float ZNear = 0.1f;
+    public const float ZFar = 1000f;
+    
     internal List<LightCameraLocData> LightCameraLocs = new List<LightCameraLocData>();
 
     internal struct LightCameraLocData
@@ -20,6 +23,8 @@ public abstract class Light
         public int CameraPositionLoc;
         public int TextureSizeLoc;
         public int ViewProjectionMatrixLoc;
+        public int ZNearLoc;
+        public int ZFarLoc;
     }
     
     public abstract unsafe LightManager.LightData UpdateLight(RenderSystem.DrawCallback drawCallback);
@@ -51,6 +56,12 @@ public abstract class Light
             lightCameraLocData.ViewProjectionMatrixLoc =
                 Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{this.Index}].cameraData[{i}].viewProjectionMatrix");
 
+            lightCameraLocData.ZNearLoc =
+                Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{this.Index}].cameraData[{i}].zNear");
+            
+            lightCameraLocData.ZFarLoc =
+                Raylib.GetShaderLocation(Assets.lightingShader, $"lights[{this.Index}].cameraData[{i}].zFar");
+            
             LightCameraLocs.Add(lightCameraLocData);
         }
         
@@ -58,7 +69,7 @@ public abstract class Light
         
         for (int i = 0; i < count; i++)
         {
-            depthTextureLocs[i] = Raylib.GetShaderLocation(Assets.lightingShader, $"depthTexture");
+            depthTextureLocs[i] = Raylib.GetShaderLocation(Assets.lightingShader, $"depthTextures[{i}]");
         }
 
     }

@@ -1,17 +1,23 @@
 ﻿using System.Numerics;
 using Raylib_cs;
+using raylib_rendering.Rendering;
 
 namespace raylib_rendering;
 
 public static class RewrittenFunctions
 {
-    public const int MaxMaterialMaps = 12;
+    public const int RaylibMaterialMapCount = 12;
     public const float Deg2Rad = (float)(Math.PI / 180.0f);
+
+    public class TextureBindingInfo
+    {
+        public uint Id;
+        public int Loc;
+    }
     
     // custom version of the Raylib DrawMesh function. This excludes opengl 1.1 support.
-    public static unsafe void DrawMesh(Mesh mesh, Material material, Matrix4x4 transform)
+    public static unsafe void DrawMesh(Mesh mesh, Material material, Matrix4x4 transform, TextureBindingInfo[] additionalTextures)
     {
-        
         // Bind shader program
         Rlgl.rlEnableShader(material.shader.id);
 
@@ -87,7 +93,7 @@ public static class RewrittenFunctions
 
         
         // Bind active texture maps (if available)
-        for (int i = 0; i < MaxMaterialMaps; i++)
+        for (int i = 0; i < RaylibMaterialMapCount; i++)
         {
             if (material.maps[i].texture.id > 0)
             {
@@ -103,6 +109,19 @@ public static class RewrittenFunctions
                 Rlgl.rlSetUniform(material.shader.locs[(int)ShaderLocationIndex.SHADER_LOC_MAP_DIFFUSE + i], &i, (int)ShaderUniformDataType.SHADER_UNIFORM_INT, 1);
             }
         }
+        
+        // apply aditional textures
+        for (int i = RaylibMaterialMapCount; i < RaylibMaterialMapCount + additionalTextures.Length; i++)
+        {
+            // Console.WriteLine($"Binding texture {additionalTextures[i-RaylibMaterialMapCount].Id} to loc {additionalTextures[i-RaylibMaterialMapCount].Loc} with slot {i}");
+            
+            TextureBindingInfo textureBindingInfo = additionalTextures[i-RaylibMaterialMapCount];
+            Rlgl.rlActiveTextureSlot(i);
+            Rlgl.rlEnableTexture(textureBindingInfo.Id);
+            
+            Rlgl.rlSetUniform(textureBindingInfo.Loc, &i, (int)ShaderUniformDataType.SHADER_UNIFORM_INT, 1);
+        }
+        
 
         // Try binding vertex array objects (VAO) or use VBOs if not possible
         // WARNING: UploadMesh() enables all vertex attributes available in mesh and sets default attribute values
@@ -201,9 +220,9 @@ public static class RewrittenFunctions
             if (mesh.indices != null) Rlgl.rlDrawVertexArrayElements(0, mesh.triangleCount * 3, (void *)0);
             else Rlgl.rlDrawVertexArray(0, mesh.vertexCount);
         }
-
+        
         // Unbind all bound texture maps
-        for (int i = 0; i < MaxMaterialMaps; i++)
+        for (int i = 0; i < RaylibMaterialMapCount + additionalTextures.Length; i++)
         {
             if (material.maps[i].texture.id > 0)
             {
@@ -256,7 +275,7 @@ public static class RewrittenFunctions
             colorTint.a = (byte)(((color.a/255.0f)*(tint.a/255.0f))*255.0f);
 
             model.materials[model.meshMaterial[i]].maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color = colorTint;
-            DrawMesh(model.meshes[i], model.materials[model.meshMaterial[i]], model.transform);
+            DrawMesh(model.meshes[i], model.materials[model.meshMaterial[i]], model.transform, TextureBindingManager.TextureBindings.ToArray());
             model.materials[model.meshMaterial[i]].maps[(int)MaterialMapIndex.MATERIAL_MAP_DIFFUSE].color = color;
         }
     }

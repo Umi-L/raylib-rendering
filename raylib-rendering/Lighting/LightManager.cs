@@ -32,10 +32,14 @@ public class LightManager
         public Texture2D DepthTexture;
         public Vector2 TextureSize;
         public Matrix4x4 ViewProjectionMatrix;
+        public float ZNear;
+        public float ZFar;
         
         public int CameraPositionLoc;
         public int TextureSizeLoc;
         public int ViewProjectionMatrixLoc;
+        public int ZNearLoc;
+        public int ZFarLoc;
     }
     
     public struct LightData
@@ -72,6 +76,8 @@ public class LightManager
 
     public static void SetShaderValues()
     {
+        TextureBindingManager.Clear();
+        
         Raylib.SetShaderValue(Assets.lightingShader, LightsCountLoc, LightDatas.Count, ShaderUniformDataType.SHADER_UNIFORM_INT);
         
         foreach (LightData data in LightDatas)
@@ -86,7 +92,7 @@ public class LightManager
     {
         
         // log all the light data
-        Console.WriteLine($"Setting light data: {lightData.Type} {lightData.Position} {lightData.Direction} {lightData.CastShadows} {lightData.CameraDataCount}");
+        // Console.WriteLine($"Setting light data: {lightData.Type} {lightData.Position} {lightData.Direction} {lightData.CastShadows} {lightData.CameraDataCount}");
         
         Raylib.SetShaderValue(Assets.lightingShader, lightData.TypeLoc, (int)lightData.Type, ShaderUniformDataType.SHADER_UNIFORM_INT);
         Raylib.SetShaderValue(Assets.lightingShader, lightData.PositionLoc, lightData.Position, ShaderUniformDataType.SHADER_UNIFORM_VEC3);
@@ -100,16 +106,22 @@ public class LightManager
             
             Raylib.SetShaderValue(Assets.lightingShader, cameraData.CameraPositionLoc, cameraData.CameraPosition, ShaderUniformDataType.SHADER_UNIFORM_VEC3);
             Raylib.SetShaderValue(Assets.lightingShader, cameraData.TextureSizeLoc, cameraData.TextureSize, ShaderUniformDataType.SHADER_UNIFORM_VEC2);
+            
+            // set znear and zfar
+            Raylib.SetShaderValue(Assets.lightingShader, cameraData.ZNearLoc, cameraData.ZNear, ShaderUniformDataType.SHADER_UNIFORM_FLOAT);
+            Raylib.SetShaderValue(Assets.lightingShader, cameraData.ZFarLoc, cameraData.ZFar, ShaderUniformDataType.SHADER_UNIFORM_FLOAT);
+            
             Raylib.SetShaderValueMatrix(Assets.lightingShader, cameraData.ViewProjectionMatrixLoc, cameraData.ViewProjectionMatrix);
             
-            Console.WriteLine($"Setting depth texture at index {i} to loc {lightData.DepthTextureLocs[i]}");
-            Raylib.SetShaderValueTexture(Assets.lightingShader, lightData.DepthTextureLocs[i], cameraData.DepthTexture);
+            // Console.WriteLine($"Setting depth texture at index {i} to loc {lightData.DepthTextureLocs[i]}");
+            // Raylib.SetShaderValueTexture(Assets.lightingShader, lightData.DepthTextureLocs[i], cameraData.DepthTexture);
+            TextureBindingManager.BindTexture(cameraData.DepthTexture.id, lightData.DepthTextureLocs[i]);
             
             DebugDraw.AddImGuiCallback(delegate
             {
                 float ratio = ImGui.GetWindowWidth() / cameraData.DepthTexture.width;
 
-                ImGui.Text($"Light {lightData.Type} {lightData.Position} {lightData.Direction} {lightData.CastShadows} {lightData.CameraDataCount} Width: {cameraData.DepthTexture.width} Height: {cameraData.DepthTexture.height}");
+                ImGui.Text($"Light {lightData.Type} {lightData.Position} {lightData.Direction} {lightData.CastShadows} {lightData.CameraDataCount} Width: {cameraData.DepthTexture.width} Height: {cameraData.DepthTexture.height} DepthTextureId: {cameraData.DepthTexture.id}");
                 rlImGui.ImageRect(cameraData.DepthTexture, (int)ImGui.GetWindowWidth(), (int)(cameraData.DepthTexture.height*ratio), new Rectangle(0, cameraData.DepthTexture.height, cameraData.DepthTexture.width, -cameraData.DepthTexture.height));
             });
         }

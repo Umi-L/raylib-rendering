@@ -16,7 +16,7 @@ public class DirectionalLight : Light
             Position,
             Position + Direction,
             new Vector3(0, 1, 0),
-            200,
+            100,
             CameraProjection.CAMERA_ORTHOGRAPHIC
         );
         
@@ -24,8 +24,11 @@ public class DirectionalLight : Light
         
         InitCameraLocs(1);
         
-        depthRenderTexture = DepthTexture.LoadRenderTextureDepthTex(1024, 1024);
-        secondDepthRenderTexture = DepthTexture.LoadRenderTextureDepthTex(1024, 1024);
+        const int width = 4000;
+        const int height = 4000;
+        
+        depthRenderTexture = DepthTexture.LoadRenderTextureDepthTex(width, height);
+        secondDepthRenderTexture = DepthTexture.LoadRenderTextureDepthTex(width, height);
         
     }
 
@@ -71,7 +74,10 @@ public class DirectionalLight : Light
 
         fixed (Camera3D* cameraPtr = &Camera)
         {
-
+            
+            Matrix4x4 viewMatrix = Raylib.GetCameraViewMatrix(cameraPtr);
+            Matrix4x4 projectionMatrix = Raylib.GetCameraProjectionMatrix(cameraPtr, 1);
+            
             return new LightManager.LightData()
             {
                 Position = this.Position,
@@ -91,13 +97,18 @@ public class DirectionalLight : Light
                 {
                     new LightManager.LightCameraData()
                     {
+                        ZNear = Light.ZNear,
+                        ZFar = Light.ZFar,
+                        
                         CameraPosition = this.Position,
                         DepthTexture = depthTexture,
                         TextureSize = new Vector2(depthTexture.width, depthTexture.height),
-                        ViewProjectionMatrix = Raylib.GetCameraProjectionMatrix(cameraPtr, Camera.fovy) * Raylib.GetCameraViewMatrix(cameraPtr),
+                        ViewProjectionMatrix = projectionMatrix * viewMatrix,
                         ViewProjectionMatrixLoc = this.LightCameraLocs[0].ViewProjectionMatrixLoc,
                         CameraPositionLoc = this.LightCameraLocs[0].CameraPositionLoc,
                         TextureSizeLoc = this.LightCameraLocs[0].TextureSizeLoc,
+                        ZNearLoc = this.LightCameraLocs[0].ZNearLoc,
+                        ZFarLoc = this.LightCameraLocs[0].ZFarLoc,
                         
                     }
                 }
