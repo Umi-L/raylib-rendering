@@ -179,6 +179,16 @@ namespace raylib_rendering
             // load text file
             string? vertexText = (vertexPath != null) ? File.ReadAllText(vertexPath) : null;
             string? fragmentText = (fragmentPath != null) ? File.ReadAllText(fragmentPath) : null;
+
+            if (fragmentText != null)
+            {
+                Console.WriteLine($"Text loaded for {fragmentPath} successfully");
+            }
+            
+            if (vertexText != null)
+            {
+                Console.WriteLine($"Text loaded for {vertexPath} successfully");
+            }
             
             // load from mem
             Shader shader = Raylib.LoadShaderFromMemory(vertexText, fragmentText);

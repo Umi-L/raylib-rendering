@@ -65,12 +65,16 @@ namespace raylib_rendering
             float[] ambient = new[] { 0.7f, 0.7f, 0.7f, 1.0f };
             Raylib.SetShaderValue(Assets.lightingShader, ambientLoc, ambient, ShaderUniformDataType.SHADER_UNIFORM_VEC4);
 
-            DirectionalLight directionalLight = new DirectionalLight(new Vector3(100, 100, 100), new Vector3(-1f,-1,-1f));
+            DirectionalLight directionalLight = new DirectionalLight(new Vector3(100, 100, 100), new Vector3(0,0,0), 120f);
             
             rlImGui.Setup(true);
 
             while (!Raylib.WindowShouldClose())
             {
+                const float lightSpeed = 0.1f;
+                
+                // orbit directional light
+                directionalLight.SetPosition(new Vector3(100, 100, 100) + new Vector3(100, 0, 0) * (float)System.Math.Sin(runningrot * lightSpeed) + new Vector3(0, 0, 100) * (float)System.Math.Cos(runningrot * lightSpeed));
 
                 // update camera
                 //Raylib.UpdateCamera(ref camera, CameraMode.CAMERA_THIRD_PERSON);

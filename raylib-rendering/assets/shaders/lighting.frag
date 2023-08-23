@@ -69,10 +69,41 @@ float unpack(vec3 vector3) {
     return x;
 }
 
+float shadowCalculation(LightData light, int cameraDataIndex, int shadowMapIndex, float bias) {
+
+    // Transform fragment position to light space
+    vec4 clipSpacePosition = light.cameraData[cameraDataIndex].viewProjectionMatrix * vec4(fragPosition, 1.0);
+
+    // Divide by w in clip space to get NDC space
+    vec3 ndcSpacePosition = clipSpacePosition.xyz / clipSpacePosition.w;
+
+    vec3 projCoords = ndcSpacePosition * 0.5 + 0.5;
+
+    // light distance accounting for orthographic projection
+    float lightDistance = projCoords.z;
+
+    // Assuming fragUV is in the range [-1, 1]
+    vec2 fragUV = projCoords.xy;
+
+    vec3 depthInLightColor = texture(depthTextures[shadowMapIndex], fragUV).rgb;
+
+    float depthInLight = unpack(depthInLightColor);
+
+    float shadow = 0.0;
+    
+    if (depthInLight < lightDistance-bias){
+        shadow = 1.0;
+    }
+    
+    return shadow;
+}   
+
 void main()
 {
 
-    const vec4 shadowColor = vec4(vec3(0.7), 1);
+    const float shadowDarkness = 0.7;
+    const float bias = 0.001;
+    
     vec4 texelColor = texture(texture0, fragTexCoord);
     
     
@@ -92,35 +123,18 @@ void main()
         LightData light = lights[i];
         
         for (int j = 0; j < light.cameraDataCount; j++){
-
-            // Transform fragment position to light space
-            vec4 clipSpacePosition = light.cameraData[j].viewProjectionMatrix * vec4(fragPosition, 1.0);
-
-            // Divide by w in clip space to get NDC space
-            vec3 ndcSpacePosition = clipSpacePosition.xyz / clipSpacePosition.w;
-            
-            vec3 projCoords = ndcSpacePosition * 0.5 + 0.5;
-            
-            // light distance accounting for orthographic projection
-            float lightDistance = projCoords.z;
-
-            // Assuming fragUV is in the range [-1, 1]
-            vec2 fragUV = projCoords.xy;
-
             int shadowMapIndex = i * MAX_LIGHT_CAMERAS + j;
-            vec3 depthInLightColor = texture(depthTextures[shadowMapIndex], fragUV).rgb;
 
-            float depthInLight = unpack(depthInLightColor);
+            float shadowFactor = shadowCalculation(light, j, shadowMapIndex, bias);
             
-            float bias = 0.002;
+            shadowFactor = 1 - shadowFactor;
             
-//            finalColor =  vec4(vec3(lightDistance), 1);
-//            return;
+            shadowFactor *= 0.3;
             
-            if (depthInLight < lightDistance-bias){
-                finalColor = texelColor*colDiffuse*fragColor*ambient*shadowColor;
-                return;
-            }
+            vec4 shadowColor = vec4(vec3(shadowDarkness + shadowFactor), 1.0);
+            
+            finalColor = texelColor * colDiffuse * fragColor * ambient * (shadowColor);
+            return;
         }
     }
     

@@ -34,7 +34,7 @@ public static class DepthTexture
             target.depth.id = Rlgl.rlLoadTextureDepth(width, height, false);
             target.depth.width = width;
             target.depth.height = height;
-            target.depth.format = PixelFormat.PIXELFORMAT_COMPRESSED_PVRT_RGBA;       //DEPTH_COMPONENT_24BIT? Original: 19
+            // target.depth.format = PixelFormat.PIXELFORMAT_UNCOMPRESSED_R32;       //DEPTH_COMPONENT_24BIT? Original: 19
             target.depth.mipmaps = 1;
 
             // Attach color texture and depth texture to FBO

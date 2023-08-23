@@ -7,16 +7,16 @@ namespace raylib_rendering.Lighting;
 
 public class DirectionalLight : Light
 {
-    public DirectionalLight(Vector3 positon, Vector3 direction)
+    public DirectionalLight(Vector3 positon, Vector3 lookAt, float fov)
     {
         Position = positon;
-        Direction = direction;
+        Direction = Vector3.Normalize(lookAt - positon);
 
         Camera = new Camera3D(
             Position,
-            Position + Direction,
+            lookAt,
             new Vector3(0, 1, 0),
-            100,
+            fov,
             CameraProjection.CAMERA_ORTHOGRAPHIC
         );
         
@@ -41,7 +41,7 @@ public class DirectionalLight : Light
     public override unsafe LightManager.LightData UpdateLight(RenderSystem.DrawCallback drawCallback)
     {
         Camera.position = Position;
-        Camera.target = Position + Direction;
+        // Camera.target = Position + Direction;
         
         Raylib.BeginTextureMode(depthRenderTexture);
         {
@@ -115,5 +115,16 @@ public class DirectionalLight : Light
 
             };
         }
+    }
+
+    public void SetPosition(Vector3 position)
+    {
+        this.Position = position;
+     
+        // set camera position
+        Camera.position = position;
+        
+        // update dir
+        this.Direction = Vector3.Normalize(Camera.target - position);
     }
 }
