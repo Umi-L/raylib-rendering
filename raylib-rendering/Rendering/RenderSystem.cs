@@ -18,12 +18,14 @@ namespace raylib_rendering.Rendering
     {
         public List<RenderPass> passes;
         public RenderTexture2D target;
+        public RenderTexture2D depthTarget;
         RenderTexture2D normalTexture;
 
         public RenderSystem(RenderPass[] renderPasses)
         {
             passes = new List<RenderPass>(renderPasses);
-            target = DepthTexture.LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+            target = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+            depthTarget = DepthTexture.LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
             normalTexture = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
         }
 
@@ -65,8 +67,19 @@ namespace raylib_rendering.Rendering
 
                 callbackWithCamAndLights();
             Raylib.EndTextureMode();
+            
+            // get depth buffer
+            Raylib.BeginTextureMode(this.depthTarget);
+            
+            // Update light shader value
+            Raylib.ClearBackground(Color.WHITE);
+                
 
-            Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.target.depth);
+            callbackWithCam();
+            Raylib.EndTextureMode();
+            
+
+            Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.depthTarget.depth);
 
             // apply normalShader
             Assets.SetModelsShader(Assets.normalShader);

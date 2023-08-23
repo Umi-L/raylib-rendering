@@ -22,7 +22,7 @@ namespace raylib_rendering.Rendering
         public RenderPass(ShaderProgram shader)
         {
             this.shader = shader;
-            this.target = DepthTexture.LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+            this.target = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
             
             this.depthLoc = Raylib.GetShaderLocation(shader.shader, "depth");
             this.normalsLoc = Raylib.GetShaderLocation(shader.shader, "normals");

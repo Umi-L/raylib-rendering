@@ -27,27 +27,8 @@ bool colorDistance(float threshold, vec4 color1, vec4 color2) {
     return true;
 }
 
-float unpack(vec3 vector3) {
-
-    float x = 0.0;
-
-    if (vector3.r == 1.0){
-        if (vector3.g == 1.0){
-            x = vector3.b + 2.0;
-        } else {
-            x = vector3.g + 1.0;
-        }
-    } else {
-        x = vector3.r;
-    }
-
-    x /= 3;
-
-    return x;
-}
-
 float sampleDepth(vec2 uv) {
-    return unpack(texture(depth, uv).rgb);
+    return texture(depth, uv).r;
 }
 
 

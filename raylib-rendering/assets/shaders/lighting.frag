@@ -21,6 +21,8 @@ out vec4 finalColor;
 #define     LIGHT_DIRECTIONAL       0
 #define     LIGHT_POINT             1
 
+#define pcfRadius 1
+
 struct LightCameraData {
     vec3 cameraPosition;
     vec2 textureSize;
@@ -50,27 +52,14 @@ uniform vec4 ambient;
 uniform vec3 viewPos;
 uniform int lightsCount;
 
-float unpack(vec3 vector3) {
+float adaptiveBias(float distanceToLight, float bias) {
+    float adjustedBias = bias * smoothstep(0.0, 1.0, distanceToLight);
 
-    float x = 0.0;
-
-    if (vector3.r == 1.0){
-        if (vector3.g == 1.0){
-            x = vector3.b + 2.0;
-        } else {
-            x = vector3.g + 1.0;
-        }
-    } else {
-        x = vector3.r;
-    }
-
-    x /= 3;
-
-    return x;
+    return adjustedBias;
 }
 
 float shadowCalculation(LightData light, int cameraDataIndex, int shadowMapIndex, float bias) {
-
+    
     // Transform fragment position to light space
     vec4 clipSpacePosition = light.cameraData[cameraDataIndex].viewProjectionMatrix * vec4(fragPosition, 1.0);
 
@@ -87,14 +76,31 @@ float shadowCalculation(LightData light, int cameraDataIndex, int shadowMapIndex
 
     vec3 depthInLightColor = texture(depthTextures[shadowMapIndex], fragUV).rgb;
 
-    float depthInLight = unpack(depthInLightColor);
+    float depthInLight = depthInLightColor.r;
 
+    // Perform Percentage Closer Filtering (PCF)
     float shadow = 0.0;
-    
-    if (depthInLight < lightDistance-bias){
-        shadow = 1.0;
+    int numSamples = 0;
+
+    for (int x = -pcfRadius; x <= pcfRadius; x++) {
+        for (int y = -pcfRadius; y <= pcfRadius; y++) {
+            vec2 offset = vec2(float(x), float(y)) / float(pcfRadius);
+
+            vec2 sampleUV = fragUV + offset * (1.0 / textureSize(depthTextures[shadowMapIndex], 0));
+
+            vec3 sampleDepthInLightColor = texture(depthTextures[shadowMapIndex], sampleUV).rgb;
+            float sampleDepthInLight = sampleDepthInLightColor.r;
+
+            if (sampleDepthInLight < lightDistance - bias) {
+                shadow += 1.0;
+            }
+
+            numSamples++;
+        }
     }
-    
+
+    shadow /= float(numSamples);
+
     return shadow;
 }   
 
@@ -125,7 +131,13 @@ void main()
         for (int j = 0; j < light.cameraDataCount; j++){
             int shadowMapIndex = i * MAX_LIGHT_CAMERAS + j;
 
-            float shadowFactor = shadowCalculation(light, j, shadowMapIndex, bias);
+            // Calculate the distance from the fragment to the light source
+            float distanceToLight = length(light.cameraData[j].cameraPosition - fragPosition);
+
+            // Calculate the adaptive bias based on the distance
+            float adjustedBias = adaptiveBias(distanceToLight, bias);
+
+            float shadowFactor = shadowCalculation(light, j, shadowMapIndex, adjustedBias);
             
             shadowFactor = 1 - shadowFactor;
             

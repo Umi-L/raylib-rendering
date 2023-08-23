@@ -16,30 +16,11 @@ uniform vec2 screenSize;
 out vec4 finalColor;
 
 
-float unpack(vec3 vector3) {
-
-    float x = 0.0;
-
-    if (vector3.r == 1.0){
-        if (vector3.g == 1.0){
-            x = vector3.b + 2.0;
-        } else {
-            x = vector3.g + 1.0;
-        }
-    } else {
-        x = vector3.r;
-    }
-
-    x /= 3;
-
-    return x;
-}
-
 void main()
 {
     vec4 depth = texture(depth, fragTexCoord);
     
-    float depthValue = unpack(depth.rgb);
+    float depthValue = depth.r;
     
     finalColor = vec4(vec3(depthValue), 1.0);
     

@@ -24,17 +24,17 @@ public static class DepthTexture
             Rlgl.rlEnableFramebuffer(target.id);
 
             // Create color texture (default to RGBA)
-            target.texture.id = Rlgl.rlLoadTexture(null, width, height, PixelFormat.PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1);
+            target.texture.id = Rlgl.rlLoadTexture(null, width, height, PixelFormat.PIXELFORMAT_UNCOMPRESSED_R32, 1);
             target.texture.width = width;
             target.texture.height = height;
-            target.texture.format = PixelFormat.PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+            target.texture.format = PixelFormat.PIXELFORMAT_UNCOMPRESSED_R32;
             target.texture.mipmaps = 1;
 
             // Create depth texture buffer (instead of raylib default renderbuffer)
             target.depth.id = Rlgl.rlLoadTextureDepth(width, height, false);
             target.depth.width = width;
             target.depth.height = height;
-            // target.depth.format = PixelFormat.PIXELFORMAT_UNCOMPRESSED_R32;       //DEPTH_COMPONENT_24BIT? Original: 19
+            target.depth.format = PixelFormat.PIXELFORMAT_UNCOMPRESSED_R32;       //DEPTH_COMPONENT_24BIT? Original: 19
             target.depth.mipmaps = 1;
 
             // Attach color texture and depth texture to FBO
