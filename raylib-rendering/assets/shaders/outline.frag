@@ -65,7 +65,7 @@ bool outlineNormal(float width)
 
 bool outlineDepth(float width) {
 
-    float depthThreshold = 0.5;
+    float depthThreshold = 0.25;
 
     float halfScaleFloor = floor(width * 0.5);
     float halfScaleCeil = ceil(width * 0.5);

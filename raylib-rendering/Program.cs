@@ -85,7 +85,7 @@ namespace raylib_rendering
 
                 renderSystem.Draw(delegate
                 {
-                    RewrittenFunctions.DrawModelEx(Assets.scarecrowModel, new Vector3(-2,0,0), new Vector3(0,1,0), runningrot, Vector3.One, Color.WHITE);
+                    RewrittenFunctions.DrawModelEx(Assets.scarecrowModel, new Vector3(4,0,0), new Vector3(0,1,0), runningrot, Vector3.One, Color.WHITE);
 
                     scene.Draw(1f);
                 },camera,
@@ -114,11 +114,11 @@ namespace raylib_rendering
                     {
                         Assets.paperShaderProgram.SetShaderUniform("scroll", paperScroll);
                     }
-                    if (ImGui.SliderFloat2("paperScale", ref paperScale, 0f, 50f))
+                    if (ImGui.SliderFloat2("paperScale", ref paperScale, 0f, 1000f))
                     {
                         Assets.paperShaderProgram.SetShaderUniform("scale", paperScale);
                     }
-                    if (ImGui.SliderFloat("paperFactor", ref paperFactor, -10f, 10f))
+                    if (ImGui.SliderFloat("paperFactor", ref paperFactor, 0f, 1f))
                     {
                         Assets.paperShaderProgram.SetShaderUniform("factor", paperFactor);
                     }

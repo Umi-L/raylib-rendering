@@ -75,8 +75,8 @@ namespace raylib_rendering
                     { "detail", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_INT, value = 10 } },
                     { "scroll", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(0, 0) } },
                     { "scale", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(1,1)} },
-                    { "factor", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.15f } },
-                    { "paperColor", new ShaderProgramUniform() {DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(23f/255f,11f/255f,11f/255f,1)} }
+                    { "factor", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.015f } },
+                    { "paperColor", new ShaderProgramUniform() {DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(1,1,1,1)} }
                 }
             );
             

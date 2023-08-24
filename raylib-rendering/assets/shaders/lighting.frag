@@ -108,7 +108,7 @@ void main()
 {
 
     const float shadowDarkness = 0.7;
-    const float bias = 0.001;
+    const float bias = 0.0002;
     
     vec4 texelColor = texture(texture0, fragTexCoord);
     

@@ -14,6 +14,13 @@ using SpixelRenderer;
 
 namespace raylib_rendering.Rendering
 {
+    
+    enum CullMode
+    {
+        CULL_FRONT = 0,
+        CULL_BACK = 1
+    }
+    
     public class RenderSystem
     {
         public List<RenderPass> passes;
@@ -77,6 +84,7 @@ namespace raylib_rendering.Rendering
 
             callbackWithCam();
             Raylib.EndTextureMode();
+
             
 
             Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.depthTarget.depth);
