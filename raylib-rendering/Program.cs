@@ -37,15 +37,6 @@ namespace raylib_rendering
             Assets.Load();
             DepthTexture.Init();
             
-            // init RenderSystem
-            RenderSystem renderSystem = new RenderSystem(new RenderPass[]
-            {
-                new RenderPass(Assets.colourFilterShaderProgram),
-                new RenderPass(Assets.outlineShaderProgram),
-                new RenderPass(Assets.paperShaderProgram),
-                // new RenderPass(Assets.testShaderProgram),
-            });
-
             // init camera
             var camera = new Camera3D(
                 new Vector3(100.0f, 100.0f, 100.0f),
@@ -54,9 +45,23 @@ namespace raylib_rendering
                 10.0f,
                 CameraProjection.CAMERA_ORTHOGRAPHIC
             );
+            
+            // init RenderSystem
+            RenderSystem renderSystem = new RenderSystem(new RenderPass[]
+            {
+                new RenderPass(Assets.colourFilterShaderProgram),
+                new RenderPass(Assets.outlineShaderProgram),
+                new RenderPass(Assets.inlineShaderProgram, 
+                    delegate { Assets.inlineShaderProgram.SetShaderUniform("viewProjectionMatrix", Utils.GetCameraViewProjectionMatrix(camera), ExtendedShaderUniformDataType.SHADER_UNIFORM_MATRIX); }),
+                new RenderPass(Assets.paperShaderProgram),
+                // new RenderPass(Assets.testShaderProgram),
+            });
+            
+            InlineManager.AddSegment(new Vector3(4, 0, 2), new Vector3(0, 10, 0));
+
+            
 
             var scene = SceneManager.LoadScene("assets/scenes/Scene1.txt");
-
 
             // ambient light level
             int ambientLoc = Raylib.GetShaderLocation(Assets.lightingShader, "ambient");
@@ -96,55 +101,23 @@ namespace raylib_rendering
                     ImGui.Text($"fps: {fps}");
                     
                     ImGui.Text("Outline");
-                    if ( ImGui.SliderFloat("outlineWidth", ref outlineWidth, 0.1f, 10f))
-                    {
-                        Assets.outlineShaderProgram.SetShaderUniform("outlineWidth", outlineWidth);
-                    }
-                    if (ImGui.ColorEdit4("outlineColor", ref outlineColor))
-                    {
-                        Assets.outlineShaderProgram.SetShaderUniform("outlineColor", outlineColor);
-                    }
+                    Assets.outlineShaderProgram.AddUniformsImGuiModifiers();
 
                     ImGui.Text("Paper");
-                    if (ImGui.SliderInt("paperDetail", ref paperDetail, 0, 20))
-                    {
-                        Assets.paperShaderProgram.SetShaderUniform("detail", paperDetail);
-                    }
-                    if (ImGui.SliderFloat2("paperScroll", ref paperScroll, -10000f, 10000f))
-                    {
-                        Assets.paperShaderProgram.SetShaderUniform("scroll", paperScroll);
-                    }
-                    if (ImGui.SliderFloat2("paperScale", ref paperScale, 0f, 1000f))
-                    {
-                        Assets.paperShaderProgram.SetShaderUniform("scale", paperScale);
-                    }
-                    if (ImGui.SliderFloat("paperFactor", ref paperFactor, 0f, 1f))
-                    {
-                        Assets.paperShaderProgram.SetShaderUniform("factor", paperFactor);
-                    }
-                    if (ImGui.ColorEdit4("paperColor", ref paperColor))
-                    {
-                        Assets.paperShaderProgram.SetShaderUniform("paperColor", paperColor);
-                    }
+                    Assets.paperShaderProgram.AddUniformsImGuiModifiers();
+                    
+                    ImGui.Text("Colour Filter");
+                    Assets.colourFilterShaderProgram.AddUniformsImGuiModifiers();
 
-                    if (ImGui.SliderFloat("hueShift", ref hueShift, -1f, 1f))
-                    {
-                        Assets.colourFilterShaderProgram.SetShaderUniform("hueShift", hueShift);
-                    }
-                    if (ImGui.SliderFloat("saturationShift", ref saturationShift, -1f, 1f))
-                    {
-                        Assets.colourFilterShaderProgram.SetShaderUniform("saturationShift", saturationShift);
-                    }
-                    if (ImGui.SliderFloat("lightnessShift", ref valueShift, -1f, 1f))
-                    {
-                        Assets.colourFilterShaderProgram.SetShaderUniform("lightnessShift", valueShift);
-                    }
-
+                    ImGui.Text("Lighting");
                     if (ImGui.SliderFloat("ambientLight", ref ambientLightLevel, 0, 1))
                     {
                         ambient = new[] { ambientLightLevel, ambientLightLevel, ambientLightLevel, 1.0f };
                         Raylib.SetShaderValue(Assets.lightingShader, ambientLoc, ambient, ShaderUniformDataType.SHADER_UNIFORM_VEC4);
                     }
+                    
+                    ImGui.Text("Inline");
+                    Assets.inlineShaderProgram.AddUniformsImGuiModifiers();
                     
                     ImGui.Text("SceneInfo");
                     scene.DebugInfo();

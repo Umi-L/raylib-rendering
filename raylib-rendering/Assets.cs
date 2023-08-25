@@ -21,10 +21,12 @@ namespace raylib_rendering
         public static Shader paperShader;
         public static Shader lightingShader;
         public static Shader colourFilterShader;
+        public static Shader inlineShader;
         
         public static ShaderProgram outlineShaderProgram;
         public static ShaderProgram paperShaderProgram;
         public static ShaderProgram colourFilterShaderProgram;
+        public static ShaderProgram inlineShaderProgram;
         public static  ShaderProgram testShaderProgram;
 
         public static Texture2D scarecrowTexture;
@@ -52,6 +54,7 @@ namespace raylib_rendering
             paperShader = LoadShader(null, "assets/shaders/paper.frag");
             lightingShader = LoadShader("assets/shaders/lighting.vert", "assets/shaders/lighting.frag");
             colourFilterShader = LoadShader(null, "assets/shaders/colourFilter.frag");
+            inlineShader = LoadShader(null, "assets/shaders/inline.frag");
             
             unsafe
             {
@@ -63,8 +66,17 @@ namespace raylib_rendering
             outlineShaderProgram = new ShaderProgram(
                 Assets.outlineShader,
                 new Dictionary<string, ShaderProgramUniform>(){
-                    { "outlineWidth", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 1f } },
-                    { "outlineColor", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } }
+                    { "outlineWidth", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 1f } },
+                    { "outlineColor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } }
+                }
+            );
+            
+            inlineShaderProgram = new ShaderProgram(
+                Assets.inlineShader,
+                new Dictionary<string, ShaderProgramUniform>()
+                {
+                    { "inlineWidth", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.001f  } },
+                    { "inlineColor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } }
                 }
             );
 
@@ -72,11 +84,11 @@ namespace raylib_rendering
                 Assets.paperShader,
                 new Dictionary<string, ShaderProgramUniform>()
                 {
-                    { "detail", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_INT, value = 10 } },
-                    { "scroll", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(0, 0) } },
-                    { "scale", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(1,1)} },
-                    { "factor", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.015f } },
-                    { "paperColor", new ShaderProgramUniform() {DataType = ShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(1,1,1,1)} }
+                    { "detail", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_INT, value = 10 } },
+                    { "scroll", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(0, 0) } },
+                    { "scale", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(1,1)} },
+                    { "factor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.015f } },
+                    { "paperColor", new ShaderProgramUniform() {DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(1,1,1,1)} }
                 }
             );
             
@@ -84,9 +96,9 @@ namespace raylib_rendering
                 Assets.colourFilterShader,
                 new Dictionary<string, ShaderProgramUniform>()
                 {
-                    { "hueShift", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0f } },
-                    { "saturationShift", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.2f } },
-                    { "lightnessShift", new ShaderProgramUniform() { DataType = ShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.2f } }
+                    { "hueShift", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0f } },
+                    { "saturationShift", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.2f } },
+                    { "lightnessShift", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.2f } }
                 }
             );
 

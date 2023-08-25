@@ -18,8 +18,12 @@ namespace raylib_rendering.Rendering
         private int depthLoc;
         private int normalsLoc;
         private int screenSizeLoc;
+        
+        private UniformCallback uniformCallback;
+        
+        public delegate void UniformCallback();
 
-        public RenderPass(ShaderProgram shader)
+        public RenderPass(ShaderProgram shader, UniformCallback? uniformCallback = null)
         {
             this.shader = shader;
             this.target = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
@@ -27,6 +31,8 @@ namespace raylib_rendering.Rendering
             this.depthLoc = Raylib.GetShaderLocation(shader.shader, "depth");
             this.normalsLoc = Raylib.GetShaderLocation(shader.shader, "normals");
             this.screenSizeLoc = Raylib.GetShaderLocation(shader.shader, "screenSize");
+            
+            this.uniformCallback = uniformCallback ?? delegate { };
         }
 
         public RenderTexture2D Apply(RenderTexture2D input, Texture2D depth, Texture2D normals)
@@ -44,6 +50,8 @@ namespace raylib_rendering.Rendering
                     Raylib.SetShaderValue(shader.shader, screenSizeLoc, new Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight()), ShaderUniformDataType.SHADER_UNIFORM_VEC2);
 
                     shader.UpdateShaderUniforms();
+                    
+                    uniformCallback();
 
                     // draw input
                     Raylib.DrawTextureRec(input.texture, new Rectangle(0, 0, input.texture.width, -input.texture.height), Vector2.Zero, Color.WHITE);
