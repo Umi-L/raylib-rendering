@@ -92,26 +92,53 @@ namespace raylib_rendering.Rendering
 
         public void DebugInfo()
         {
-            foreach (SceneEntity entity in entities)
+            // start tree
+            if (ImGui.TreeNode("Scene"))
             {
-                DebugEntity(entity);
+                foreach (SceneEntity entity in entities)
+                {
+                    DebugEntity(entity);
+                }                
+                ImGui.TreePop();
             }
+            
+            ImGui.Separator();
+            ImGui.Spacing();
         }
 
         private void DebugEntity(SceneEntity entity, int indent = 0)
         {
-            Vector3 rotationEuler = new Vector3(
-                (float)(entity.rotation.X * (180 / Math.PI)),
-                (float)(entity.rotation.Y * (180 / Math.PI)),
-                (float)(entity.rotation.Z * (180 / Math.PI))
-            );
-                
-            ImGui.Text($"{String.Concat(Enumerable.Repeat(" ", indent*4))}Name: {entity.id} Position: {entity.position} Rotation: {rotationEuler} Scale: {entity.scale}");
-            
-            foreach (SceneEntity child in entity.children)
+
+            if (ImGui.TreeNode(entity.name))
             {
-                DebugEntity(child, indent + 1);
+
+                Vector3 rotationEuler = new Vector3(
+                    (float)(entity.rotation.X * (180 / Math.PI)),
+                    (float)(entity.rotation.Y * (180 / Math.PI)),
+                    (float)(entity.rotation.Z * (180 / Math.PI))
+                );
+
+                ImGui.Text($"position: {entity.position}");
+                ImGui.Text($"rotation: {rotationEuler}");
+                ImGui.Text($"scale: {entity.scale}");
+                ImGui.Text($"id: {entity.id}");
+
+                if (entity.children.Length != 0)
+                {
+                    if (ImGui.TreeNode("children"))
+                    {
+                        foreach (SceneEntity child in entity.children)
+                        {
+                            DebugEntity(child, indent + 1);
+                        }
+
+                        ImGui.TreePop();
+                    }
+                }
+                
+                ImGui.TreePop();
             }
+            ImGui.Spacing();
         }
     }
 

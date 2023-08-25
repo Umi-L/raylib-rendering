@@ -66,7 +66,7 @@ namespace raylib_rendering
             outlineShaderProgram = new ShaderProgram(
                 Assets.outlineShader,
                 new Dictionary<string, ShaderProgramUniform>(){
-                    { "outlineWidth", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 1f } },
+                    { "outlineWidth", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 2f } },
                     { "outlineColor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } }
                 }
             );
@@ -75,7 +75,7 @@ namespace raylib_rendering
                 Assets.inlineShader,
                 new Dictionary<string, ShaderProgramUniform>()
                 {
-                    { "inlineWidth", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.001f  } },
+                    { "inlineWidth", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 2f  } },
                     { "inlineColor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } }
                 }
             );

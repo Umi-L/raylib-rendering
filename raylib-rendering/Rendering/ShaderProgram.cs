@@ -103,7 +103,27 @@ namespace raylib_rendering.Rendering
             }
         }
 
-        public void AddUniformsImGuiModifiers()
+        public void AddUniformsImGuiModifiers(string? name = null)
+        {
+            if (name == null)
+            {
+                name = "Shader with id " + shader.id + " uniforms";
+            }
+            
+            if (ImGui.TreeNode(name))
+            {
+                DrawUniformsImGui();
+                ImGui.TreePop();
+            }
+            
+            
+            // add separator
+            ImGui.Separator();
+            // gap
+            ImGui.Spacing();
+        }
+
+        private void DrawUniformsImGui()
         {
             // foreach uniform
             for (int i = 0; i < uniforms.Keys.Count; i++)
@@ -156,10 +176,20 @@ namespace raylib_rendering.Rendering
                         // set shader value to new value
                         SetShaderUniform(key, value);
                     }
+                } else if (uniform.DataType == ExtendedShaderUniformDataType.SHADER_UNIFORM_MATRIX)
+                {
+                    var value = (Matrix4x4)uniform.value;
+                    
+                    // display matrix
+                    ImGui.Text(key);
+                    ImGui.Text($"[{value.M11}, {value.M12}, {value.M13}, {value.M14}]");
+                    ImGui.Text($"[{value.M21}, {value.M22}, {value.M23}, {value.M24}]");
+                    ImGui.Text($"[{value.M31}, {value.M32}, {value.M33}, {value.M34}]");
+                    ImGui.Text($"[{value.M41}, {value.M42}, {value.M43}, {value.M44}]");
                 }
             }
         }
-        
+
         public void Dispose()
         {
             Raylib.UnloadShader(shader);

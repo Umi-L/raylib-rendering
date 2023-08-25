@@ -119,10 +119,28 @@ public class LightManager
             
             DebugDraw.AddImGuiCallback(delegate
             {
-                float ratio = ImGui.GetWindowWidth() / cameraData.DepthTexture.width;
+                if (ImGui.TreeNode($"{lightData.Type} Light {i}"))
+                {
+                    float ratio = ImGui.GetWindowWidth() / cameraData.DepthTexture.width;
 
-                ImGui.Text($"Light {lightData.Type} {lightData.Position} {lightData.Direction} {lightData.CastShadows} {lightData.CameraDataCount} Width: {cameraData.DepthTexture.width} Height: {cameraData.DepthTexture.height} DepthTextureId: {cameraData.DepthTexture.id}");
-                rlImGui.ImageRect(cameraData.DepthTexture, (int)ImGui.GetWindowWidth(), (int)(cameraData.DepthTexture.height*ratio), new Rectangle(0, cameraData.DepthTexture.height, cameraData.DepthTexture.width, -cameraData.DepthTexture.height));
+                    // ImGui.Text(
+                    //     $"Light {lightData.Type} {lightData.Position} {lightData.Direction} {lightData.CastShadows} {lightData.CameraDataCount} Width: {cameraData.DepthTexture.width} Height: {cameraData.DepthTexture.height} DepthTextureId: {cameraData.DepthTexture.id}");
+                    
+                    ImGui.Text($"Position: {cameraData.CameraPosition}");
+                    ImGui.Text($"TextureSize: {cameraData.TextureSize}");
+                    ImGui.Text($"ZNear: {cameraData.ZNear}");
+                    ImGui.Text($"ZFar: {cameraData.ZFar}");
+                    
+                    rlImGui.ImageRect(cameraData.DepthTexture, (int)ImGui.GetWindowWidth(),
+                        (int)(cameraData.DepthTexture.height * ratio),
+                        new Rectangle(0, cameraData.DepthTexture.height, cameraData.DepthTexture.width,
+                            -cameraData.DepthTexture.height));
+                    
+                    ImGui.TreePop();
+                }
+                
+                ImGui.Separator();
+                ImGui.Spacing();
             });
         }
     }

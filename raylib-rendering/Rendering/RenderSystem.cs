@@ -124,14 +124,20 @@ namespace raylib_rendering.Rendering
 
             float ratio = ImGui.GetWindowWidth() / depthTexture.width;
 
-            ImGui.Text("buffers");
-            rlImGui.ImageRect(depthTexture, (int)ImGui.GetWindowWidth(), (int)(depthTexture.height*ratio), new Rectangle(0, depthTexture.height, depthTexture.width, -depthTexture.height));
-            rlImGui.ImageRect(normalTexture.texture, (int)ImGui.GetWindowWidth(), (int)(normalTexture.texture.height * ratio), new Rectangle(0, normalTexture.texture.height, normalTexture.texture.width, -normalTexture.texture.height));
+            if (ImGui.TreeNode("buffers"))
+            {
+                rlImGui.ImageRect(depthTexture, (int)ImGui.GetWindowWidth(), (int)(depthTexture.height * ratio),
+                    new Rectangle(0, depthTexture.height, depthTexture.width, -depthTexture.height));
+                rlImGui.ImageRect(normalTexture.texture, (int)ImGui.GetWindowWidth(),
+                    (int)(normalTexture.texture.height * ratio),
+                    new Rectangle(0, normalTexture.texture.height, normalTexture.texture.width,
+                        -normalTexture.texture.height));
+            }
 
             Raylib.ClearBackground(Color.WHITE);
 
             Raylib.DrawTextureRec(currentTarget.texture, new Rectangle(0, 0, currentTarget.texture.width, -currentTarget.texture.height), Vector2.Zero, Color.WHITE);
-
+            
             rlImGui.End();
 
             Raylib.EndDrawing();

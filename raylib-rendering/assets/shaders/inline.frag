@@ -58,6 +58,9 @@ float OrthographicDistanceFromCamera(vec3 position) {
 
 void main()
 {
+    
+    float thicknessUV = inlineWidth / screenSize.x;
+    
     // foreach line to draw
     for (int i = 0; i < inlineSegmentsCount; i++) {
         
@@ -79,7 +82,7 @@ void main()
         vec3 projCoordsP2 = ndcSpacePositionP2 * 0.5 + 0.5;
         
         // draw line
-        vec2 line = drawLineWithPercentage(projCoordsP1.xy, projCoordsP2.xy, inlineWidth);
+        vec2 line = drawLineWithPercentage(projCoordsP1.xy, projCoordsP2.xy, thicknessUV);
         
         // if line crosses texel
         if (line.x > 0.0){
