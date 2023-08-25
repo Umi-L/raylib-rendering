@@ -24,16 +24,16 @@ namespace raylib_rendering.Rendering
     public class RenderSystem
     {
         public List<RenderPass> passes;
-        public RenderTexture2D target;
-        public RenderTexture2D depthTarget;
-        RenderTexture2D normalTexture;
+        public ScreenSizeRenderTexture target;
+        public ScreenSizeRenderTexture depthTarget;
+        ScreenSizeRenderTexture normalTexture;
 
         public RenderSystem(RenderPass[] renderPasses)
         {
             passes = new List<RenderPass>(renderPasses);
-            target = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
-            depthTarget = DepthTexture.LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
-            normalTexture = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+            target = new ScreenSizeRenderTexture();
+            depthTarget = new ScreenSizeRenderTexture(true);
+            normalTexture = new ScreenSizeRenderTexture();
         }
 
         public void AddPass(RenderPass pass)
@@ -66,7 +66,7 @@ namespace raylib_rendering.Rendering
             };
             
             
-            Raylib.BeginTextureMode(this.target);
+            Raylib.BeginTextureMode(this.target.renderTexture);
             
                 // Update light shader value
                 Raylib.ClearBackground(Color.WHITE);
@@ -76,7 +76,7 @@ namespace raylib_rendering.Rendering
             Raylib.EndTextureMode();
             
             // get depth buffer
-            Raylib.BeginTextureMode(this.depthTarget);
+            Raylib.BeginTextureMode(this.depthTarget.renderTexture);
             
             // Update light shader value
             Raylib.ClearBackground(Color.WHITE);
@@ -87,13 +87,13 @@ namespace raylib_rendering.Rendering
 
             
 
-            Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.depthTarget.depth);
+            Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.depthTarget.renderTexture.depth);
 
             // apply normalShader
             Assets.SetModelsShader(Assets.normalShader);
 
             // get normal buffer
-            Raylib.BeginTextureMode(normalTexture);
+            Raylib.BeginTextureMode(normalTexture.renderTexture);
             {
                 Raylib.ClearBackground(Color.WHITE);
                 
@@ -105,12 +105,12 @@ namespace raylib_rendering.Rendering
             // Assets.SetModelsShader(Assets.lightingShader);
 
             // draw passes
-            RenderTexture2D currentTarget = this.target;
+            RenderTexture2D currentTarget = this.target.renderTexture;
 
             // for each pass
             foreach (RenderPass pass in passes)
             {
-                currentTarget = pass.Apply(currentTarget, depthTexture, normalTexture.texture);
+                currentTarget = pass.Apply(currentTarget, depthTexture, normalTexture.renderTexture.texture);
             }
 
             // draw result
@@ -128,10 +128,10 @@ namespace raylib_rendering.Rendering
             {
                 rlImGui.ImageRect(depthTexture, (int)ImGui.GetWindowWidth(), (int)(depthTexture.height * ratio),
                     new Rectangle(0, depthTexture.height, depthTexture.width, -depthTexture.height));
-                rlImGui.ImageRect(normalTexture.texture, (int)ImGui.GetWindowWidth(),
-                    (int)(normalTexture.texture.height * ratio),
-                    new Rectangle(0, normalTexture.texture.height, normalTexture.texture.width,
-                        -normalTexture.texture.height));
+                rlImGui.ImageRect(normalTexture.renderTexture.texture, (int)ImGui.GetWindowWidth(),
+                    (int)(normalTexture.renderTexture.texture.height * ratio),
+                    new Rectangle(0, normalTexture.renderTexture.texture.height, normalTexture.renderTexture.texture.width,
+                        -normalTexture.renderTexture.texture.height));
             }
 
             Raylib.ClearBackground(Color.WHITE);
@@ -145,7 +145,7 @@ namespace raylib_rendering.Rendering
 
         public void Dispose()
         {
-            Raylib.UnloadRenderTexture(target);
+            Raylib.UnloadRenderTexture(target.renderTexture);
 
             foreach (RenderPass pass in passes)
             {

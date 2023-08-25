@@ -1,16 +1,17 @@
 ﻿using System.Numerics;
 using Raylib_cs;
 using raylib_rendering;
+using raylib_rendering.Rendering;
 
 namespace SpixelRenderer;
 
 public static class DepthTexture
 {
-    private static RenderTexture2D depthRenderTexture;
+    private static ScreenSizeRenderTexture depthRenderTexture;
 
     public static void Init()
     {
-        depthRenderTexture = LoadRenderTextureDepthTex(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+        depthRenderTexture = new ScreenSizeRenderTexture(true);
     }
     
     public static unsafe RenderTexture2D LoadRenderTextureDepthTex(int width, int height)
@@ -71,7 +72,7 @@ public static class DepthTexture
     public static Texture2D GetBufferFromRenderTexture(Texture2D depth)
     {
         // get depth buffer
-        Raylib.BeginTextureMode(depthRenderTexture);
+        Raylib.BeginTextureMode(depthRenderTexture.renderTexture);
         {
             Raylib.ClearBackground(Color.BLACK);
 
@@ -83,6 +84,6 @@ public static class DepthTexture
         }
         Raylib.EndTextureMode();
 
-        return depthRenderTexture.texture;
+        return depthRenderTexture.renderTexture.texture;
     }
 }

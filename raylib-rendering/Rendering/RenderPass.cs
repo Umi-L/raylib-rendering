@@ -13,7 +13,7 @@ namespace raylib_rendering.Rendering
     public class RenderPass
     {
         public ShaderProgram shader;
-        public RenderTexture2D target;
+        public ScreenSizeRenderTexture target;
 
         private int depthLoc;
         private int normalsLoc;
@@ -26,7 +26,7 @@ namespace raylib_rendering.Rendering
         public RenderPass(ShaderProgram shader, UniformCallback? uniformCallback = null)
         {
             this.shader = shader;
-            this.target = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+            this.target = new ScreenSizeRenderTexture();
             
             this.depthLoc = Raylib.GetShaderLocation(shader.shader, "depth");
             this.normalsLoc = Raylib.GetShaderLocation(shader.shader, "normals");
@@ -37,7 +37,7 @@ namespace raylib_rendering.Rendering
 
         public RenderTexture2D Apply(RenderTexture2D input, Texture2D depth, Texture2D normals)
         {
-            Raylib.BeginTextureMode(target);
+            Raylib.BeginTextureMode(target.renderTexture);
             {
                 Raylib.ClearBackground(Color.WHITE);
 
@@ -62,12 +62,12 @@ namespace raylib_rendering.Rendering
             }
             Raylib.EndTextureMode();
 
-            return target;
+            return target.renderTexture;
         }
 
         public void Dispose()
         {
-            Raylib.UnloadRenderTexture(target);
+            Raylib.UnloadRenderTexture(target.renderTexture);
         }
     }
 }

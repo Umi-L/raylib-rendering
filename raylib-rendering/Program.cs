@@ -12,28 +12,16 @@ namespace raylib_rendering
 {
     static class Program
     {
-
-        public static float outlineWidth = 2f;
-        public static Vector4 outlineColor = new Vector4(1,0,0,1);
-        public static int paperDetail = 10;
-        public static Vector2 paperScroll = new Vector2(0,0);
-        public static Vector2 paperScale = new Vector2(1,1);
-        public static float paperFactor = 1f;
-        public static Vector4 paperColor = new Vector4(0, 0, 0, 1);
-        
-        public static float hueShift = 0f;
-        public static float saturationShift = 0.2f;
-        public static float valueShift = 0.2f;
-        
         public static float ambientLightLevel = 0.7f;
+        public static Vector2 screenSize = new Vector2(1200, 800);
 
         public static void Main()
         {
 
             float runningrot = 0;
 
-            Raylib.InitWindow(1200, 800, "Raylib-Rendering");
-            
+            Raylib.InitWindow((int)screenSize.X, (int)screenSize.Y, "Raylib-Rendering");
+
             // make window resizable
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
             
@@ -77,6 +65,12 @@ namespace raylib_rendering
 
             while (!Raylib.WindowShouldClose())
             {
+                // check for window resize
+                if (Raylib.IsWindowResized())
+                {
+                    ResizeManager.Invoke(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+                }
+                
                 // update camera
                 //Raylib.UpdateCamera(ref camera, CameraMode.CAMERA_THIRD_PERSON);
                 CustomCamera.UpdateCamera(ref camera);
