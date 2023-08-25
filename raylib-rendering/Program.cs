@@ -34,6 +34,9 @@ namespace raylib_rendering
 
             Raylib.InitWindow(1200, 800, "Raylib-Rendering");
             
+            // make window resizable
+            Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
+            
             Assets.Load();
             DepthTexture.Init();
             
