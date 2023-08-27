@@ -42,6 +42,18 @@ public static class InlineManager
             Assets.inlineShaderProgram.SetShaderUniform("inlineSegments[" + i + "].end", segment.End, ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC3);
         }
     }
+    
+    public static void DebugDrawSegments()
+    {
+        foreach (InlineSegment segment in Segments)
+        {
+            Raylib.DrawLine3D(segment.Start, segment.End, Color.GREEN);
+            
+            // draw the start and end points
+            Raylib.DrawSphere(segment.Start, 0.1f, Color.BLUE);
+            Raylib.DrawSphere(segment.End, 0.1f, Color.BLUE);
+        }
+    }
 
     public static void ClearSegments()
     {

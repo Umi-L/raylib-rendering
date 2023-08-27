@@ -42,15 +42,27 @@ namespace raylib_rendering
             {
                 new RenderPass(Assets.colourFilterShaderProgram),
                 new RenderPass(Assets.outlineShaderProgram),
-                new RenderPass(Assets.inlineShaderProgram, 
-                    delegate { Assets.inlineShaderProgram.SetShaderUniform("viewProjectionMatrix", Utils.GetCameraViewProjectionMatrix(ref camera), ExtendedShaderUniformDataType.SHADER_UNIFORM_MATRIX); }),
+                new RenderPass(Assets.inlineShaderProgram,
+                    delegate
+                    {
+                        Assets.inlineShaderProgram.SetShaderUniform("viewProjectionMatrix", Utils.GetCameraViewProjectionMatrix(ref camera), ExtendedShaderUniformDataType.SHADER_UNIFORM_MATRIX);
+                        Assets.inlineShaderProgram.SetShaderUniform("targetPosition", camera.target, ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC3);
+                    }),
                 new RenderPass(Assets.paperShaderProgram),
                 // new RenderPass(Assets.testShaderProgram),
             });
             
-            InlineManager.AddSegment(new Vector3(0, 0, 0), new Vector3(0, 10, 0));
+            // Calculate the height and half-width of the equilateral triangle
+            float triangleHeight = MathF.Sqrt(3) / 2 * 5;
+            float halfWidth = 5 / 2;
 
-            
+            Vector3 pointA = new Vector3(0, 2 + triangleHeight, 0); // Top vertex
+            Vector3 pointB = new Vector3(-halfWidth, 2, 0); // Bottom-left vertex
+            Vector3 pointC = new Vector3(halfWidth, 2, 0); // Bottom-right vertex
+
+            InlineManager.AddSegment(pointA, pointB);
+            InlineManager.AddSegment(pointB, pointC);
+            InlineManager.AddSegment(pointC, pointA);
 
             var scene = SceneManager.LoadScene("assets/scenes/Scene1.txt");
 
@@ -65,6 +77,7 @@ namespace raylib_rendering
 
             while (!Raylib.WindowShouldClose())
             {
+                
                 // check for window resize
                 if (Raylib.IsWindowResized())
                 {
@@ -88,7 +101,7 @@ namespace raylib_rendering
                 renderSystem.Draw(delegate
                 {
                     RewrittenFunctions.DrawModelEx(Assets.scarecrowModel, new Vector3(0,0,0), new Vector3(0,1,0), runningrot, Vector3.One, Color.WHITE);
-
+                    
                     scene.Draw(1f);
                 },camera,
                 delegate

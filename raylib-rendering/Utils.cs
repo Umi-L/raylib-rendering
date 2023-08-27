@@ -5,16 +5,19 @@ namespace raylib_rendering;
 
 public static class Utils
 {
-    public static unsafe Matrix4x4 GetCameraViewProjectionMatrix(ref Camera3D camera)
+    public static Matrix4x4 GetCameraViewProjectionMatrix(ref Camera3D camera)
     {
-        fixed (Camera3D* cameraPtr = &camera)
-        {
+        // only orthographic camera is supported
+        float aspect = Raylib.GetScreenWidth() / (float)Raylib.GetScreenHeight();
+        double top = camera.fovy/2.0;
+        double right = top*aspect;
 
-            Matrix4x4 viewMatrix = Raylib.GetCameraViewMatrix(cameraPtr);
-            Matrix4x4 projectionMatrix = Raylib.GetCameraProjectionMatrix(cameraPtr, 1);
-            
-            return projectionMatrix * viewMatrix;
-        }
-
+        // Calculate projection matrix from orthographic
+        Matrix4x4 matProj = Raymath.MatrixOrtho(-right, right, -top, top, 0.01f, 1000f);
+    
+        // Calculate view matrix from camera look at (and transpose it)
+        Matrix4x4 matView = Raymath.MatrixLookAt(camera.position, camera.target, camera.up);
+        
+        return matProj * matView;
     }
 }

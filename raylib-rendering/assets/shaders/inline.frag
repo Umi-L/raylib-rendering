@@ -17,6 +17,7 @@ uniform vec2 screenSize;
 uniform float inlineWidth;
 uniform vec4 inlineColor;
 uniform mat4 viewProjectionMatrix;
+uniform vec3 targetPositon;
 
 struct InlineSegment {
     vec3 start;
@@ -49,6 +50,18 @@ vec2 drawLineWithPercentage(vec2 p1, vec2 p2, float thickness) {
     return vec2(alpha, percentage);
 }
 
+float drawCircle(vec2 point, float radius){
+    vec2 uv = gl_FragCoord.xy / screenSize.xy;
+    float distance = length(uv - point);
+    
+    float alpha = 0;
+    if (distance < radius) {
+        alpha = 1;
+    }
+    
+    return alpha;
+}
+
 float OrthographicDistanceFromCamera(vec3 position) {
     vec4 clipSpacePosition = viewProjectionMatrix * vec4(position, 1.0);
     vec3 ndcSpacePosition = clipSpacePosition.xyz / clipSpacePosition.w;
@@ -58,8 +71,8 @@ float OrthographicDistanceFromCamera(vec3 position) {
 
 void main()
 {
-    
-    float thicknessUV = inlineWidth / screenSize.x;
+    // convert pixel width to uv width
+    float thicknessUV = inlineWidth / (screenSize.x * 2);
     
     // foreach line to draw
     for (int i = 0; i < inlineSegmentsCount; i++) {
@@ -83,6 +96,17 @@ void main()
         
         // draw line
         vec2 line = drawLineWithPercentage(projCoordsP1.xy, projCoordsP2.xy, thicknessUV);
+        
+//        // draw circle at each end
+//        float circle1 = drawCircle(projCoordsP1.xy, 0.003);
+//        
+//        // draw circle at each end
+//        float circle2 = drawCircle(projCoordsP2.xy, 0.003);
+//        
+//        if (circle1 > 0.0 || circle2 > 0.0) {
+//            finalColor = vec4(1,0,0,1);
+//            return;
+//        }
         
         // if line crosses texel
         if (line.x > 0.0){
