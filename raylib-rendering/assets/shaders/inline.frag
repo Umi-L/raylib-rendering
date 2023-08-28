@@ -4,7 +4,7 @@
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
-#define MAX_INLINE_SEGMENTS 10
+#define MAX_INLINE_SEGMENTS 500
 
 // Input uniform values
 uniform sampler2D texture0;
@@ -27,11 +27,19 @@ struct InlineSegment {
 uniform InlineSegment inlineSegments[MAX_INLINE_SEGMENTS];
 uniform int inlineSegmentsCount;
 
+uniform sampler2D displacementMap;
+uniform float displacementAmount;
+
 // Output fragment color
 out vec4 finalColor;
 
 vec2 drawLineWithPercentage(vec2 p1, vec2 p2, float thickness) {
     vec2 uv = gl_FragCoord.xy / screenSize.xy;
+    
+    vec4 disp = texture(displacementMap, uv);
+    
+    uv.x += disp.x * displacementAmount;
+    uv.y += disp.y * displacementAmount;
 
     float a = abs(distance(p1, uv));
     float b = abs(distance(p2, uv));

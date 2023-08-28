@@ -1,19 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "xsv26OKmp8tFClzqj0H6UmXfddGBTeWq3a4QgtoSpMFUKUGg52ZbVL8v1PZddmPbQuGoJuZsSwIIMs2vU4Ejow==",
+  "dgSpecHash": "trPgJhCRwdscQKW5wUBMEBnNgKspkMKNlN1O0QtDQKhpz1sAQvYc66KdQA8vHZ9H5UoAwNccOxPERwSAyKw9fQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\julia\\Projects\\raylib-rendering\\raylib-rendering\\raylib-rendering.csproj",
+  "projectFilePath": "C:\\Users\\Julian\\source\\repos\\raylib-rendering\\raylib-rendering\\raylib-rendering.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\julia\\.nuget\\packages\\imgui.net\\1.89.7.1\\imgui.net.1.89.7.1.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\raylib-cs\\4.5.0.3\\raylib-cs.4.5.0.3.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\system.buffers\\4.4.0\\system.buffers.4.4.0.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.4.0\\system.runtime.compilerservices.unsafe.4.4.0.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.20\\microsoft.netcore.app.ref.6.0.20.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.20\\microsoft.windowsdesktop.app.ref.6.0.20.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.20\\microsoft.aspnetcore.app.ref.6.0.20.nupkg.sha512",
-    "C:\\Users\\julia\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.20\\microsoft.netcore.app.host.win-x64.6.0.20.nupkg.sha512"
+    "C:\\Users\\Julian\\.nuget\\packages\\imgui.net\\1.89.7.1\\imgui.net.1.89.7.1.nupkg.sha512",
+    "C:\\Users\\Julian\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\Julian\\.nuget\\packages\\raylib-cs\\4.5.0.3\\raylib-cs.4.5.0.3.nupkg.sha512",
+    "C:\\Users\\Julian\\.nuget\\packages\\system.buffers\\4.4.0\\system.buffers.4.4.0.nupkg.sha512",
+    "C:\\Users\\Julian\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\Julian\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.4.0\\system.runtime.compilerservices.unsafe.4.4.0.nupkg.sha512"
   ],
   "logs": []
 }

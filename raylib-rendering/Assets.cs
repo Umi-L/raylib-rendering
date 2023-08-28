@@ -22,12 +22,14 @@ namespace raylib_rendering
         public static Shader lightingShader;
         public static Shader colourFilterShader;
         public static Shader inlineShader;
+        public static Shader displacementShader;
         
         public static ShaderProgram outlineShaderProgram;
         public static ShaderProgram paperShaderProgram;
         public static ShaderProgram colourFilterShaderProgram;
         public static ShaderProgram inlineShaderProgram;
-        public static  ShaderProgram testShaderProgram;
+        public static ShaderProgram testShaderProgram;
+        public static ShaderProgram displacementShaderProgram;
 
         public static Texture2D scarecrowTexture;
 
@@ -55,6 +57,7 @@ namespace raylib_rendering
             lightingShader = LoadShader("assets/shaders/lighting.vert", "assets/shaders/lighting.frag");
             colourFilterShader = LoadShader(null, "assets/shaders/colourFilter.frag");
             inlineShader = LoadShader(null, "assets/shaders/inline.frag");
+            displacementShader = LoadShader(null, "assets/shaders/displacement.frag");
             
             unsafe
             {
@@ -89,6 +92,16 @@ namespace raylib_rendering
                     { "scale", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(1,1)} },
                     { "factor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.015f } },
                     { "paperColor", new ShaderProgramUniform() {DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(1,1,1,1)} }
+                }
+            );
+            
+            displacementShaderProgram = new ShaderProgram(
+                Assets.displacementShader,
+                new Dictionary<string, ShaderProgramUniform>()
+                {
+                    { "scroll", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(0, 0) } },
+                    { "scale", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(1,1)} },
+                    { "factor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.015f } },
                 }
             );
             

@@ -59,7 +59,7 @@ namespace raylib_rendering.Rendering
             {
                 drawEntity(child, scale, entity, newPosition, newRotation, newScale);
             }
-            
+
             if (entity.id == null) return;
 
             bool success = Assets.Prefabs.TryGetValue(entity.id, out var model);
@@ -146,12 +146,21 @@ namespace raylib_rendering.Rendering
     {
         public string name;
         public string? id;
+        public Point[][]? lines;
+        
         public Vector3 position;
         public Vector3 rotation;
         public Vector3 scale;
         public SceneEntity[] children;
     }
-
+    
+    public class Point
+    {
+        public float x;
+        public float y;
+        public float z;
+    }
+    
     internal class SceneManager
     {
         public static Scene LoadScene(string path)
@@ -163,14 +172,16 @@ namespace raylib_rendering.Rendering
             {
                 SceneEntity entity = scene.entities[i];
                 
-                fixEntity(entity);
+                
+                
+                initEntity(entity);
 
             }
 
             return scene;
         }
         
-        private static void fixEntity(SceneEntity entity)
+        private static void initEntity(SceneEntity entity, Vector3 runningPosition = new Vector3(), Vector3 runningRotation = new Vector3(), Vector3 runningScale = new Vector3())
         {
             //swap y and z on all vec3s because blender
             entity.position = FlipYAndZ(entity.position);
@@ -181,9 +192,55 @@ namespace raylib_rendering.Rendering
             entity.rotation = FlipYAndZ(entity.rotation);
             entity.scale = FlipYAndZ(entity.scale);
             
+            runningPosition += entity.position;
+            runningRotation += entity.rotation;
+            runningScale = entity.scale;
+
+            if (entity.lines != null)
+            {
+                // foreach line
+                foreach (var line in entity.lines)
+                {
+                    for (int j = 1; j < line.Length; j++)
+                    {
+                        
+                        var _pointA = line[j - 1];
+                        var _pointB = line[j];
+                        
+                        Vector3 pointA = new Vector3(_pointA.x, _pointA.y, _pointA.z);
+                        Vector3 pointB = new Vector3(_pointB.x, _pointB.y, _pointB.z);
+                        
+                        // swap y and z
+                        pointA = SceneManager.FlipYAndZ(pointA);
+                        pointB = SceneManager.FlipYAndZ(pointB);
+                        
+                        // flip points along x axis
+                        pointA.X = -pointA.X;
+                        pointB.X = -pointB.X;
+
+                        // transform pointA and pointB around runningPosition with runningRotation
+                        pointA = Vector3.Transform(pointA, Matrix4x4.CreateFromYawPitchRoll(runningRotation.Y+MathF.PI, runningRotation.X, runningRotation.Z));
+                        pointB = Vector3.Transform(pointB, Matrix4x4.CreateFromYawPitchRoll(runningRotation.Y+MathF.PI, runningRotation.X, runningRotation.Z));
+
+                        pointA += runningPosition;
+                        pointB += runningPosition;
+
+                        pointA *= runningScale;
+                        pointB *= runningScale;
+                        
+                        
+
+
+                        Console.WriteLine($"pointA: {pointA} pointB: {pointB}");
+
+                        InlineManager.AddSegment(pointA, pointB);
+                    }
+                }
+            }
+            
             foreach (SceneEntity child in entity.children)
             {
-                fixEntity(child);
+                initEntity(child, runningPosition, runningRotation, runningScale);
             }
         }
 

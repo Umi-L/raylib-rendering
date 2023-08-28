@@ -17,8 +17,9 @@ namespace raylib_rendering.Rendering
 
         private int depthLoc;
         private int normalsLoc;
+        private int displacementLoc;
         private int screenSizeLoc;
-        
+
         private UniformCallback uniformCallback;
         
         public delegate void UniformCallback();
@@ -31,11 +32,12 @@ namespace raylib_rendering.Rendering
             this.depthLoc = Raylib.GetShaderLocation(shader.shader, "depth");
             this.normalsLoc = Raylib.GetShaderLocation(shader.shader, "normals");
             this.screenSizeLoc = Raylib.GetShaderLocation(shader.shader, "screenSize");
+            this.displacementLoc = Raylib.GetShaderLocation(shader.shader, "displacement");
             
             this.uniformCallback = uniformCallback ?? delegate { };
         }
 
-        public RenderTexture2D Apply(RenderTexture2D input, Texture2D depth, Texture2D normals)
+        public RenderTexture2D Apply(RenderTexture2D input, Texture2D depth, Texture2D normals, Texture2D displacement)
         {
             Raylib.BeginTextureMode(target.renderTexture);
             {
@@ -47,6 +49,7 @@ namespace raylib_rendering.Rendering
                     // must set shader value inside of shader mode SMH
                     Raylib.SetShaderValueTexture(shader.shader, depthLoc, depth);
                     Raylib.SetShaderValueTexture(shader.shader, normalsLoc, normals);
+                    Raylib.SetShaderValueTexture(shader.shader, displacementLoc, displacement);
                     Raylib.SetShaderValue(shader.shader, screenSizeLoc, new Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight()), ShaderUniformDataType.SHADER_UNIFORM_VEC2);
 
                     shader.UpdateShaderUniforms();

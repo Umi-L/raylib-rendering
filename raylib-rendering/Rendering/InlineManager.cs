@@ -11,7 +11,20 @@ public struct InlineSegment
 
 public static class InlineManager
 {
+    public const int MAX_INLINE_SEGMENTS = 10000;
+    public static int DATA_TEXTURE_SIZE;
     public static List<InlineSegment> Segments = new List<InlineSegment>();
+    public static Image inlineDataImage;
+    public static Texture2D inlineDataTexture;
+
+    public static void init()
+    {
+        
+        
+        DATA_TEXTURE_SIZE = (int) Math.Ceiling(Math.Sqrt(MAX_INLINE_SEGMENTS*3));
+        inlineDataImage = Raylib.GenImageColor(DATA_TEXTURE_SIZE, DATA_TEXTURE_SIZE, Color.BLACK);
+        inlineDataImage.format = PixelFormat.PIXELFORMAT_UNCOMPRESSED_R32;
+    }
 
     public static void AddSegment(InlineSegment segment)
     {
@@ -32,6 +45,24 @@ public static class InlineManager
     public static void UpdateShaderUniforms()
     {
         Assets.inlineShaderProgram.SetShaderUniform("inlineSegmentsCount", Segments.Count, ExtendedShaderUniformDataType.SHADER_UNIFORM_INT);
+
+        // // foreach inlineSegment
+        // for (int i = 0; i < Segments.Count; i++)
+        // {
+        //     var segment = Segments[i];
+        //
+        //     Color X = new Color();
+        //     
+        //     for (int j = 0; i < 3; i++)
+        //     {
+        //         // calculate the position in the texture
+        //         int x = (i+j) % DATA_TEXTURE_SIZE;
+        //         int y = (i+j) / DATA_TEXTURE_SIZE;
+        //         
+        //         // set the pixel
+        //         Raylib.ImageDrawPixel(ref inlineDataImage, i, j, new Color());
+        //     }
+        // }
         
         // forach segment, set the uniform
         for (int i = 0; i < Segments.Count; i++)

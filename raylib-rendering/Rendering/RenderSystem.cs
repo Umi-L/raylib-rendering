@@ -26,6 +26,7 @@ namespace raylib_rendering.Rendering
         public List<RenderPass> passes;
         public ScreenSizeRenderTexture target;
         public ScreenSizeRenderTexture depthTarget;
+        public ScreenSizeRenderTexture displacementTarget;
         ScreenSizeRenderTexture normalTexture;
 
         public RenderSystem(RenderPass[] renderPasses)
@@ -34,6 +35,7 @@ namespace raylib_rendering.Rendering
             target = new ScreenSizeRenderTexture();
             depthTarget = new ScreenSizeRenderTexture(true);
             normalTexture = new ScreenSizeRenderTexture();
+            displacementTarget = new ScreenSizeRenderTexture();
         }
 
         public void AddPass(RenderPass pass)
@@ -64,6 +66,17 @@ namespace raylib_rendering.Rendering
                 callback();
                 Raylib.EndMode3D();
             };
+
+            Raylib.BeginTextureMode(displacementTarget.renderTexture);
+                
+                    Raylib.ClearBackground(Color.WHITE);
+                    Raylib.BeginShaderMode(Assets.displacementShader);
+                        // draw fullscreen quad
+                        Raylib.DrawRectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight(), Color.BLACK);
+                    Raylib.EndShaderMode();
+                        
+            Raylib.EndTextureMode();
+            
             
             
             Raylib.BeginTextureMode(this.target.renderTexture);
@@ -110,7 +123,7 @@ namespace raylib_rendering.Rendering
             // for each pass
             foreach (RenderPass pass in passes)
             {
-                currentTarget = pass.Apply(currentTarget, depthTexture, normalTexture.renderTexture.texture);
+                currentTarget = pass.Apply(currentTarget, depthTexture, normalTexture.renderTexture.texture, displacementTarget.renderTexture.texture);
             }
 
             // draw result
@@ -131,7 +144,11 @@ namespace raylib_rendering.Rendering
                 rlImGui.ImageRect(normalTexture.renderTexture.texture, (int)ImGui.GetWindowWidth(),
                     (int)(normalTexture.renderTexture.texture.height * ratio),
                     new Rectangle(0, normalTexture.renderTexture.texture.height, normalTexture.renderTexture.texture.width,
-                        -normalTexture.renderTexture.texture.height));
+                        -normalTexture.renderTexture.texture.height));  
+                rlImGui.ImageRect(displacementTarget.renderTexture.texture, (int)ImGui.GetWindowWidth(),
+                    (int)(displacementTarget.renderTexture.texture.height * ratio),
+                    new Rectangle(0, displacementTarget.renderTexture.texture.height, displacementTarget.renderTexture.texture.width,
+                        -displacementTarget.renderTexture.texture.height));
             }
 
             Raylib.ClearBackground(Color.WHITE);

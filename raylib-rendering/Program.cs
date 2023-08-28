@@ -51,20 +51,8 @@ namespace raylib_rendering
                 new RenderPass(Assets.paperShaderProgram),
                 // new RenderPass(Assets.testShaderProgram),
             });
-            
-            // Calculate the height and half-width of the equilateral triangle
-            float triangleHeight = MathF.Sqrt(3) / 2 * 5;
-            float halfWidth = 5 / 2;
 
-            Vector3 pointA = new Vector3(0, 2 + triangleHeight, 0); // Top vertex
-            Vector3 pointB = new Vector3(-halfWidth, 2, 0); // Bottom-left vertex
-            Vector3 pointC = new Vector3(halfWidth, 2, 0); // Bottom-right vertex
-
-            InlineManager.AddSegment(pointA, pointB);
-            InlineManager.AddSegment(pointB, pointC);
-            InlineManager.AddSegment(pointC, pointA);
-
-            var scene = SceneManager.LoadScene("assets/scenes/Scene1.txt");
+            var scene = SceneManager.LoadScene("assets/scenes/Scene1.json");
 
             // ambient light level
             int ambientLoc = Raylib.GetShaderLocation(Assets.lightingShader, "ambient");
@@ -117,6 +105,8 @@ namespace raylib_rendering
                     Assets.paperShaderProgram.AddUniformsImGuiModifiers("paper");
                     
                     Assets.colourFilterShaderProgram.AddUniformsImGuiModifiers("colour filter");
+                    
+                    Assets.displacementShaderProgram.AddUniformsImGuiModifiers("displacement");
 
 
                     if (ImGui.TreeNode("lighting"))
