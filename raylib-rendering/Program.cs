@@ -25,6 +25,11 @@ namespace raylib_rendering
             // make window resizable
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
             
+            // make window run on gpu
+            // Raylib.SetConfigFlags(ConfigFlags.FLAG_VSYNC_HINT | ConfigFlags.FLAG_MSAA_4X_HINT | ConfigFlags.FLAG_WINDOW_HIGHDPI);
+            Raylib.SetConfigFlags(ConfigFlags.FLAG_VSYNC_HINT);
+            
+            
             Assets.Load();
             DepthTexture.Init();
             
@@ -46,7 +51,6 @@ namespace raylib_rendering
                     delegate
                     {
                         Assets.inlineShaderProgram.SetShaderUniform("viewProjectionMatrix", Utils.GetCameraViewProjectionMatrix(ref camera), ExtendedShaderUniformDataType.SHADER_UNIFORM_MATRIX);
-                        Assets.inlineShaderProgram.SetShaderUniform("targetPosition", camera.target, ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC3);
                     }),
                 new RenderPass(Assets.paperShaderProgram),
                 // new RenderPass(Assets.testShaderProgram),

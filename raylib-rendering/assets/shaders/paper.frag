@@ -64,4 +64,5 @@ void main()
 	vec3 noise = color + (vec3(smallNoise) * paperColor.rgb) - (vec3(bigNoise) * paperColor.rgb);
 	
 	finalColor = vec4(noise, 1.0);
+	
 }

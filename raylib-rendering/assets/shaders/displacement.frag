@@ -18,6 +18,9 @@ uniform vec2 scroll;
 uniform vec2 scale;
 uniform float factor;
 
+uniform vec2 largeScale;
+uniform float largeFactor;
+
 // Output fragment color
 out vec4 finalColor;
 
@@ -54,10 +57,11 @@ float snoise(vec2 v){
 
 void main()
 {
-    vec2 uv = fragTexCoord;
+    float sample1 = snoise((fragTexCoord + scroll)*scale)*factor;
+    float sample2 = snoise((fragTexCoord + vec2(2124, 243) + scroll)*scale)*factor;
     
-//    float sample1 = snoise((fragTexCoord + scroll)*scale)*factor;
-//    float sample2 = snoise((fragTexCoord + vec2(2124, 243) + scroll)*scale)*factor;
+    float largeSample1 = snoise((fragTexCoord + scroll)*largeScale)*largeFactor;
+    float largeSample2 = snoise((fragTexCoord + vec2(2124, 243) + scroll)*largeScale)*largeFactor;
     
-    finalColor = vec4(vec3(fragTexCoord, 0.0), 1.0);
+    finalColor = vec4(sample1+largeSample1, sample2+largeSample2, 0.0, 1.0);
 }

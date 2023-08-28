@@ -70,7 +70,8 @@ namespace raylib_rendering
                 Assets.outlineShader,
                 new Dictionary<string, ShaderProgramUniform>(){
                     { "outlineWidth", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 2f } },
-                    { "outlineColor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } }
+                    { "outlineColor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } },
+                    { "displacementAmount", new ShaderProgramUniform(){ DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.004f }}
                 }
             );
             
@@ -79,7 +80,8 @@ namespace raylib_rendering
                 new Dictionary<string, ShaderProgramUniform>()
                 {
                     { "inlineWidth", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 2f  } },
-                    { "inlineColor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } }
+                    { "inlineColor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC4, value = new Vector4(0,0,0,1) } },
+                    { "displacementAmount", new ShaderProgramUniform(){ DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.004f }}
                 }
             );
 
@@ -100,8 +102,11 @@ namespace raylib_rendering
                 new Dictionary<string, ShaderProgramUniform>()
                 {
                     { "scroll", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(0, 0) } },
-                    { "scale", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(1,1)} },
-                    { "factor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.015f } },
+                    { "scale", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(30,30)} },
+                    { "factor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.3f } },
+                    { "largeScale", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_VEC2, value = new Vector2(2,2)} },
+                    { "largeFactor", new ShaderProgramUniform() { DataType = ExtendedShaderUniformDataType.SHADER_UNIFORM_FLOAT, value = 0.1f } }
+
                 }
             );
             

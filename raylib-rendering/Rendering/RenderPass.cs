@@ -46,6 +46,9 @@ namespace raylib_rendering.Rendering
                 // start shader
                 Raylib.BeginShaderMode(shader.shader);
                 {
+                    // set custom uniform callback
+                    uniformCallback();
+                    
                     // must set shader value inside of shader mode SMH
                     Raylib.SetShaderValueTexture(shader.shader, depthLoc, depth);
                     Raylib.SetShaderValueTexture(shader.shader, normalsLoc, normals);
@@ -54,8 +57,6 @@ namespace raylib_rendering.Rendering
 
                     shader.UpdateShaderUniforms();
                     
-                    uniformCallback();
-
                     // draw input
                     Raylib.DrawTextureRec(input.texture, new Rectangle(0, 0, input.texture.width, -input.texture.height), Vector2.Zero, Color.WHITE);
                 }

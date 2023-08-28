@@ -90,7 +90,7 @@ namespace raylib_rendering
             }
             
             // check for scroll wheel
-            camera.fovy += Raylib.GetMouseWheelMove() * fovSpeed;
+            camera.fovy += Raylib.GetMouseWheelMoveV().Y * fovSpeed;
             
             // get angle between camera and target x and z positions
             float angle = (float)Math.Atan2(camera.target.X - camera.position.X, camera.target.Z - camera.position.Z);
@@ -113,6 +113,26 @@ namespace raylib_rendering
             if (camera.fovy < 1)
             {
                 camera.fovy = 1;
+            }
+
+            Assets.displacementShaderProgram.SetShaderUniform("scroll", new Vector2(camera.position.X, camera.position.Y)/50);
+            
+            if (Raylib.GetMouseWheelMoveV().Y != 0)
+            {
+                
+                Assets.displacementShaderProgram.SetShaderUniform("scale", new Vector2(camera.fovy));
+                
+                Assets.displacementShaderProgram.SetShaderUniform("factor", 0.5f / (camera.fovy / 10f));
+
+                
+                // make line width smaller as the fov gets bigger
+                float newLineWidth = 10f / (camera.fovy / 10f);
+                
+                // clamp
+                newLineWidth = Math.Clamp(newLineWidth, 0.1f, 10f);
+                
+                Assets.outlineShaderProgram.SetShaderUniform("outlineWidth", newLineWidth);
+                Assets.inlineShaderProgram.SetShaderUniform("inlineWidth", newLineWidth);
             }
             
             

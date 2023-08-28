@@ -66,17 +66,6 @@ namespace raylib_rendering.Rendering
                 callback();
                 Raylib.EndMode3D();
             };
-
-            Raylib.BeginTextureMode(displacementTarget.renderTexture);
-                
-                    Raylib.ClearBackground(Color.WHITE);
-                    Raylib.BeginShaderMode(Assets.displacementShader);
-                        // draw fullscreen quad
-                        Raylib.DrawRectangle(0, 0, Raylib.GetScreenWidth(), Raylib.GetScreenHeight(), Color.BLACK);
-                    Raylib.EndShaderMode();
-                        
-            Raylib.EndTextureMode();
-            
             
             
             Raylib.BeginTextureMode(this.target.renderTexture);
@@ -90,17 +79,34 @@ namespace raylib_rendering.Rendering
             
             // get depth buffer
             Raylib.BeginTextureMode(this.depthTarget.renderTexture);
-            
-            // Update light shader value
-            Raylib.ClearBackground(Color.WHITE);
-                
+            {
+                Raylib.ClearBackground(Color.WHITE);
 
-            callbackWithCam();
+
+                callbackWithCam();
+            }
             Raylib.EndTextureMode();
 
-            
-
             Texture2D depthTexture = DepthTexture.GetBufferFromRenderTexture(this.depthTarget.renderTexture.depth);
+            
+            // get displacement
+            Raylib.BeginTextureMode(displacementTarget.renderTexture);
+            {
+                Raylib.ClearBackground(Color.WHITE);
+                Raylib.BeginShaderMode(Assets.displacementShader);
+                {
+                    // set uniforms
+                    Assets.displacementShaderProgram.UpdateShaderUniforms();
+
+                    // draw target
+                    Raylib.DrawTextureRec(target.renderTexture.texture,
+                        new Rectangle(0, 0, target.renderTexture.texture.width, -target.renderTexture.texture.height),
+                        Vector2.Zero, Color.WHITE);
+                }
+                Raylib.EndShaderMode();
+            }
+            Raylib.EndTextureMode();
+            
 
             // apply normalShader
             Assets.SetModelsShader(Assets.normalShader);

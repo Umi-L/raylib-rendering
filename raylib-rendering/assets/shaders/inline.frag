@@ -17,7 +17,6 @@ uniform vec2 screenSize;
 uniform float inlineWidth;
 uniform vec4 inlineColor;
 uniform mat4 viewProjectionMatrix;
-uniform vec3 targetPositon;
 
 struct InlineSegment {
     vec3 start;
@@ -27,7 +26,7 @@ struct InlineSegment {
 uniform InlineSegment inlineSegments[MAX_INLINE_SEGMENTS];
 uniform int inlineSegmentsCount;
 
-uniform sampler2D displacementMap;
+uniform sampler2D displacement;
 uniform float displacementAmount;
 
 // Output fragment color
@@ -36,7 +35,7 @@ out vec4 finalColor;
 vec2 drawLineWithPercentage(vec2 p1, vec2 p2, float thickness) {
     vec2 uv = gl_FragCoord.xy / screenSize.xy;
     
-    vec4 disp = texture(displacementMap, uv);
+    vec4 disp = texture(displacement, uv);
     
     uv.x += disp.x * displacementAmount;
     uv.y += disp.y * displacementAmount;
@@ -141,4 +140,5 @@ void main()
     }
     
     finalColor = colDiffuse * texture(texture0, fragTexCoord);
+//    finalColor =  texture(depth, fragTexCoord);
 }

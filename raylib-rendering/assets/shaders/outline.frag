@@ -11,9 +11,11 @@ uniform vec4 colDiffuse;
 uniform sampler2D depth;
 uniform sampler2D normals;
 uniform vec2 screenSize;
+uniform sampler2D displacement;
 
 uniform float outlineWidth;
 uniform vec4 outlineColor;
+uniform float displacementAmount;
 
 // Output fragment color
 out vec4 finalColor;
@@ -33,7 +35,7 @@ float sampleDepth(vec2 uv) {
 
 
 
-bool outlineNormal(float width)
+bool outlineNormal(float width, vec2 uv)
 {
     float normalThreshold = 0.5;
 
@@ -42,10 +44,10 @@ bool outlineNormal(float width)
 
     vec2 _MainTex_TexelSize = vec2(1.0 / screenSize.x, 1.0 / screenSize.y);
 
-    vec2 bottomLeftUV = fragTexCoord - vec2(_MainTex_TexelSize.x, _MainTex_TexelSize.y) * halfScaleFloor;
-    vec2 topRightUV = fragTexCoord + vec2(_MainTex_TexelSize.x, _MainTex_TexelSize.y) * halfScaleCeil;  
-    vec2 bottomRightUV = fragTexCoord + vec2(_MainTex_TexelSize.x * halfScaleCeil, -_MainTex_TexelSize.y * halfScaleFloor);
-    vec2 topLeftUV = fragTexCoord + vec2(-_MainTex_TexelSize.x * halfScaleFloor, _MainTex_TexelSize.y * halfScaleCeil);
+    vec2 bottomLeftUV = uv - vec2(_MainTex_TexelSize.x, _MainTex_TexelSize.y) * halfScaleFloor;
+    vec2 topRightUV = uv + vec2(_MainTex_TexelSize.x, _MainTex_TexelSize.y) * halfScaleCeil;  
+    vec2 bottomRightUV = uv + vec2(_MainTex_TexelSize.x * halfScaleCeil, -_MainTex_TexelSize.y * halfScaleFloor);
+    vec2 topLeftUV = uv + vec2(-_MainTex_TexelSize.x * halfScaleFloor, _MainTex_TexelSize.y * halfScaleCeil);
 
     vec3 bottomLeftNormal = texture(normals, bottomLeftUV).rgb;
     vec3 topRightNormal = texture(normals, topRightUV).rgb;
@@ -63,7 +65,7 @@ bool outlineNormal(float width)
     return false;
 }
 
-bool outlineDepth(float width) {
+bool outlineDepth(float width, vec2 uv) {
 
     float depthThreshold = 0.25;
 
@@ -72,10 +74,10 @@ bool outlineDepth(float width) {
 
     vec2 _MainTex_TexelSize = vec2(1.0 / screenSize.x, 1.0 / screenSize.y);
 
-    vec2 bottomLeftUV = fragTexCoord - vec2(_MainTex_TexelSize.x, _MainTex_TexelSize.y) * halfScaleFloor;
-    vec2 topRightUV = fragTexCoord + vec2(_MainTex_TexelSize.x, _MainTex_TexelSize.y) * halfScaleCeil;  
-    vec2 bottomRightUV = fragTexCoord + vec2(_MainTex_TexelSize.x * halfScaleCeil, -_MainTex_TexelSize.y * halfScaleFloor);
-    vec2 topLeftUV = fragTexCoord + vec2(-_MainTex_TexelSize.x * halfScaleFloor, _MainTex_TexelSize.y * halfScaleCeil);
+    vec2 bottomLeftUV = uv - vec2(_MainTex_TexelSize.x, _MainTex_TexelSize.y) * halfScaleFloor;
+    vec2 topRightUV = uv + vec2(_MainTex_TexelSize.x, _MainTex_TexelSize.y) * halfScaleCeil;  
+    vec2 bottomRightUV = uv + vec2(_MainTex_TexelSize.x * halfScaleCeil, -_MainTex_TexelSize.y * halfScaleFloor);
+    vec2 topLeftUV = uv + vec2(-_MainTex_TexelSize.x * halfScaleFloor, _MainTex_TexelSize.y * halfScaleCeil);
 
     float bottomLeftDepth = sampleDepth(bottomLeftUV);
     float topRightDepth = sampleDepth(topRightUV);
@@ -102,8 +104,11 @@ void main()
 
     finalColor = texture(texture0, fragTexCoord);
 
-    bool normalOutline = outlineNormal(outlineWidth);
-    bool depthOutline = outlineDepth(outlineWidth);
+    vec2 disp = texture(displacement, fragTexCoord).xy * displacementAmount;
+    vec2 uv = fragTexCoord + disp;
+
+    bool normalOutline = outlineNormal(outlineWidth, uv);
+    bool depthOutline = outlineDepth(outlineWidth, uv);
 
     if (normalOutline || depthOutline) {
 		finalColor = outlineColor;
