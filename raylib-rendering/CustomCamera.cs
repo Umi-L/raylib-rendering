@@ -14,8 +14,11 @@ namespace raylib_rendering
         static float fovSpeed = 1f;
         static float distSpeed = 0.001f;
         static float rotationSpeed = 1f;
-        static float targetAngle = 0;
+        static float targetAngle = MathF.PI/4;
+        static float currentAngle = targetAngle;
         static float targetVerticalAngle = 0;
+        static float rotationDuration = 2.5f;
+        static float rotationTimer = rotationDuration;
 
         public static void UpdateCamera(ref Camera3D camera)
         {
@@ -80,31 +83,37 @@ namespace raylib_rendering
             }
             
             
-            if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT))
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
             {
-                targetAngle -= rotationSpeed * deltaTime;
+                targetAngle -= MathF.PI/2;
+                rotationTimer = 0;
             }
-            if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT))
             {
-                targetAngle += rotationSpeed * deltaTime;
+                targetAngle += MathF.PI/2;
+                rotationTimer = 0;
             }
             
             // check for scroll wheel
             camera.fovy += Raylib.GetMouseWheelMoveV().Y * fovSpeed;
             
-            // get angle between camera and target x and z positions
-            float angle = (float)Math.Atan2(camera.target.X - camera.position.X, camera.target.Z - camera.position.Z);
-            
             // compare angle to target angle
-            if (angle != targetAngle)
+            if (rotationTimer < rotationDuration)
             {
+                // add to timer
+                rotationTimer += deltaTime;
+                
+                // lerp angle to target angle
+                currentAngle = MathFuncs.EasingFunctions.Interpolate(currentAngle, targetAngle,(rotationTimer / rotationDuration), MathFuncs.EasingFunctions.InOutSine);
+                
+                // lerp angle to target angle
                 float distance = Vector2.Distance(new Vector2(camera.position.X, camera.position.Z), new Vector2(camera.target.X, camera.target.Z));
                 
                 // move camera position to point on circle with radius of distance between camera and target and angle of target angle
                 camera.position = new Vector3(
-                    camera.target.X + (float)Math.Sin(targetAngle) * distance,
+                    camera.target.X + (float)Math.Sin(currentAngle) * distance,
                     camera.position.Y,
-                    camera.target.Z + (float)Math.Cos(targetAngle) * distance
+                    camera.target.Z + (float)Math.Cos(currentAngle) * distance
                 );
             }
             
